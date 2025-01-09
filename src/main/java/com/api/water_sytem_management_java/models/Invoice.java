@@ -19,6 +19,13 @@ public class Invoice implements Serializable {
     private Date issueDate;
     private String details;
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Date getIssueDate() {
         return issueDate;

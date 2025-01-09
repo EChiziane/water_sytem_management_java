@@ -1,9 +1,10 @@
-
 package com.api.water_sytem_management_java.models;
+
 import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,8 +22,18 @@ public class Customer implements Serializable {
     private Boolean active;
     private String valve;
 
-/*    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> paymentHistory;*/
+    private int mesesEmDivida; // Número total de meses em dívida
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
+
+    public int getMesesEmDivida() {
+        return mesesEmDivida;
+    }
+
+    public void setMesesEmDivida(int mesesEmDivida) {
+        this.mesesEmDivida = mesesEmDivida;
+    }
 
     public String getName() {
         return name;
@@ -64,5 +75,11 @@ public class Customer implements Serializable {
         this.valve = valve;
     }
 
+    public UUID getId() {
+        return id;
+    }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
 }

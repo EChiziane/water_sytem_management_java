@@ -1,46 +1,36 @@
-package com.api.water_sytem_management_java.models;
+package com.api.water_sytem_management_java.controllers;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.UUID;
 
-@Entity
-@Table(name = "payment")
-public class Payment implements Serializable {
+public class paymentDto {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID customerId;
 
     private Double amount;
     private String paymentDate;
     private String referenceMonth;
+
+    private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
 
-    public Customer getCustomer() {
-        return customer;
+    public byte getNumMonths() {
+        return numMonths;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setNumMonths(byte numMonths) {
+        this.numMonths = numMonths;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
-    public UUID getId() {
-        return id;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public Double getAmount() {
@@ -82,6 +72,4 @@ public class Payment implements Serializable {
     public void setConfirmed(Boolean confirmed) {
         this.confirmed = confirmed;
     }
-
-
 }
