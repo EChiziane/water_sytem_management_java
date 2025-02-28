@@ -27,38 +27,7 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> savePayment(@RequestBody paymentDto paymentDto) {
 
-        // Busca o cliente associado ao pagamento pelo ID
-        Customer customer = customerRepository.findById(paymentDto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
-
-        // Verifica se o cliente possui dívidas
-        if (customer.getMesesEmDivida() < 1) {
-            throw new RuntimeException("O cliente não possui dívidas a serem pagas");
-        }
-
-        // Verifica se o número de meses a pagar é maior que os meses em dívida do cliente
-        if (paymentDto.getNumMonths() > customer.getMesesEmDivida()) {
-            throw new IllegalArgumentException("O número de meses a pagar é maior que o número de meses em dívida");
-        }
-
-        // Criação e configuração do pagamento
-        Payment payment = new Payment();
-        BeanUtils.copyProperties(paymentDto, payment);
-
-        // Calcula e define os meses de referência do pagamento
-        payment.setReferenceMonth(paymentService.getMonthsToPay(paymentDto.getNumMonths(), customer.getMesesEmDivida()));
-
-        // Atualiza o número de meses em dívida do cliente
-        customer.setMesesEmDivida(customer.getMesesEmDivida() - paymentDto.getNumMonths());
-
-        // Associa o cliente ao pagamento
-        payment.setCustomer(customer);
-
-        // Salva o pagamento e retorna uma resposta com status CREATED
-        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.savePayment(payment));
-    }
 
     @GetMapping
     public ResponseEntity<List<Payment>> getPayments() {

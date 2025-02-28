@@ -22,7 +22,6 @@ public class CustomerService {
 
     @Transactional
     public Customer saveCostumer(Customer costumer){
-        costumer.setMesesEmDivida(1);
         return  customerRepository.save(costumer);}
 
     public List<Customer> getCustomers(){return customerRepository.findAll();}

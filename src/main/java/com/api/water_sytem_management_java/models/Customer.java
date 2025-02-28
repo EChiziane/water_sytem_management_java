@@ -1,38 +1,31 @@
 package com.api.water_sytem_management_java.models;
-
 import jakarta.persistence.*;
-
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-
 @Entity
-@Table(name = "Customer")
+@Table(name = "tb_customers")
 public class Customer implements Serializable {
+
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String name;
     private String contact;
     private String address;
-    private Boolean active;
-    private String valve;
+    private CustomerStatus status;
+    private Integer valve;
+    private Integer monthsInDebt; // Total number of months in debt
 
-    private int mesesEmDivida; // Número total de meses em dívida
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Payment> payments = new ArrayList<>();
-
-    public int getMesesEmDivida() {
-        return mesesEmDivida;
+    public UUID getId() {
+        return id;
     }
 
-    public void setMesesEmDivida(int mesesEmDivida) {
-        this.mesesEmDivida = mesesEmDivida;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -59,27 +52,47 @@ public class Customer implements Serializable {
         this.address = address;
     }
 
-    public Boolean getActive() {
-        return active;
+    public CustomerStatus getStatus() {
+        return status;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(CustomerStatus status) {
+        this.status = status;
     }
 
-    public String getValve() {
+    public Integer getValve() {
         return valve;
     }
 
-    public void setValve(String valve) {
+    public void setValve(Integer valve) {
         this.valve = valve;
     }
 
-    public UUID getId() {
-        return id;
+    public Integer getMonthsInDebt() {
+        return monthsInDebt;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setMonthsInDebt(Integer monthsInDebt) {
+        this.monthsInDebt = monthsInDebt;
     }
+
+    /*  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+            private List<Payment> payments = new ArrayList<>();
+        */
+  boolean  isContactValid(){
+    return true;
+    }
+
+    boolean isContactSizeEqual9(){
+      return true;
+    }
+
+    boolean isContactStartBy8(){
+      return true;
+    }
+
+    boolean isContactSecondDigitValid(){
+      return true;
+    }
+
 }
