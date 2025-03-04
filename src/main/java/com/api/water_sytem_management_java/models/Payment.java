@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "tb_payment1")
 public class Payment implements Serializable {
 
     @Serial
@@ -18,10 +19,59 @@ public class Payment implements Serializable {
     private UUID id;
 
     private Double amount;
-    private String paymentDate;
+
+    private UUID customerId;
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
+    }
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime paymentDate) {
+        this.createdAt = paymentDate;
+    }
+
+    public byte getNumMonths() {
+        return numMonths;
+    }
+
+    public void setNumMonths(byte numMonths) {
+        this.numMonths = numMonths;
+    }
+
     private String referenceMonth;
+    private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
+
+ /*   @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;*/
+
+    public Payment(Double amount, String referenceMonth, String paymentMethod, Boolean confirmed, Customer customer) {
+        this.amount = amount;
+        this.createdAt = LocalDateTime.now();;
+        this.referenceMonth = referenceMonth;
+        this.paymentMethod = paymentMethod;
+        this.confirmed = confirmed;
+      //  this.customer = customer;
+    }
+
+    public Payment() {
+
+    }
+/*
 
     public Customer getCustomer() {
         return customer;
@@ -31,9 +81,8 @@ public class Payment implements Serializable {
         this.customer = customer;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+
+*/
 
     public UUID getId() {
         return id;
@@ -51,13 +100,6 @@ public class Payment implements Serializable {
         this.amount = amount;
     }
 
-    public String getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(String paymentDate) {
-        this.paymentDate = paymentDate;
-    }
 
     public String getReferenceMonth() {
         return referenceMonth;

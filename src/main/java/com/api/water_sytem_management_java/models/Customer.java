@@ -2,9 +2,12 @@ package com.api.water_sytem_management_java.models;
 import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
 @Entity
-@Table(name = "tb_customers")
+@Table(name = "tb_customers2")
 public class Customer implements Serializable {
 
     @Serial
@@ -13,12 +16,22 @@ public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private String name;
     private String contact;
     private String address;
     private CustomerStatus status;
     private Integer valve;
     private Integer monthsInDebt; // Total number of months in debt
+    private LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public UUID getId() {
         return id;
@@ -76,23 +89,20 @@ public class Customer implements Serializable {
         this.monthsInDebt = monthsInDebt;
     }
 
-    /*  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-            private List<Payment> payments = new ArrayList<>();
-        */
-  boolean  isContactValid(){
-    return true;
+    // Validations
+    boolean isContactValid() {
+        return true;
     }
 
-    boolean isContactSizeEqual9(){
-      return true;
+    boolean isContactSizeEqual9() {
+        return true;
     }
 
-    boolean isContactStartBy8(){
-      return true;
+    boolean isContactStartBy8() {
+        return true;
     }
 
-    boolean isContactSecondDigitValid(){
-      return true;
+    boolean isContactSecondDigitValid() {
+        return true;
     }
-
 }

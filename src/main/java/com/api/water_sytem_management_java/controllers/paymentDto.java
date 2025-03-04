@@ -10,12 +10,14 @@ public class paymentDto {
     private UUID customerId;
 
     private Double amount;
-    private String paymentDate;
+
     private String referenceMonth;
 
     private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
+
+
 
     public byte getNumMonths() {
         return numMonths;
@@ -39,14 +41,6 @@ public class paymentDto {
 
     public void setAmount(Double amount) {
         this.amount = amount;
-    }
-
-    public String getPaymentDate() {
-        return paymentDate;
-    }
-
-    public void setPaymentDate(String paymentDate) {
-        this.paymentDate = paymentDate;
     }
 
     public String getReferenceMonth() {

@@ -30,7 +30,7 @@ public class PaymentService {
     }
 
     public List<Payment> getPayments() {
-        return paymentRepository.findAll();
+        return paymentRepository.findAllByOrderByCreatedAtDesc();
     }
 
     public Optional<Payment> getPaymentById(UUID id) {
