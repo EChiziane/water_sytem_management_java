@@ -3,7 +3,9 @@ package com.api.water_sytem_management_java.controllers;
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.Payment;
 import com.api.water_sytem_management_java.repositories.CustomerRepository;
+import com.api.water_sytem_management_java.services.CustomerService;
 import com.api.water_sytem_management_java.services.PaymentService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,26 +22,21 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final CustomerRepository customerRepository;
 
-    public PaymentController(PaymentService paymentService, CustomerRepository customerRepository) {
+    private  final CustomerService customerService;
+    public PaymentController(PaymentService paymentService, CustomerRepository customerRepository, CustomerService customerService) {
         this.paymentService = paymentService;
         this.customerRepository = customerRepository;
+        this.customerService = customerService;
     }
 
     @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody Payment payment) {
-   /*     Customer customer = customerRepository.findById(paymentdto.getCustomerId()).get();
+    public ResponseEntity<Payment> createPayment(@RequestBody PaymentDto paymentDto) {
+      Customer customer= customerRepository.findById(paymentDto.getCustomerId())
+              .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        if (customer == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        Payment payment = new Payment(paymentdto.getAmount(),
-                paymentdto.getReferenceMonth(),
-                paymentdto.getPaymentMethod(),
-                paymentdto.getConfirmed(),
-                customer
-        ) {
-        };*/
-
+        Payment payment = new Payment() ;
+        BeanUtils.copyProperties(paymentDto,payment);
+        payment.setCustomer(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.savePayment(payment));
     }
 

@@ -20,15 +20,9 @@ public class Payment implements Serializable {
 
     private Double amount;
 
-    private UUID customerId;
 
-    public UUID getCustomerId() {
-        return customerId;
-    }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
-    }
+
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -58,6 +52,18 @@ public class Payment implements Serializable {
  /*   @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;*/
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     public Payment(Double amount, String referenceMonth, String paymentMethod, Boolean confirmed, Customer customer) {
         this.amount = amount;

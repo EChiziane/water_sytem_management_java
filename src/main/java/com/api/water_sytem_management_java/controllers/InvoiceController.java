@@ -1,7 +1,10 @@
 package com.api.water_sytem_management_java.controllers;
 
 
+import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.Invoice;
+import com.api.water_sytem_management_java.repositories.CustomerRepository;
+import com.api.water_sytem_management_java.services.CustomerService;
 import com.api.water_sytem_management_java.services.InvoiceService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +21,16 @@ public class InvoiceController {
 
     private final InvoiceService invoiceService;
 
+
     public InvoiceController(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
+
     }
 
     @PostMapping
     public ResponseEntity<Invoice> saveInvoice(@RequestBody Invoice invoice) {
+
+
         return ResponseEntity.status(HttpStatus.CREATED).body(invoiceService.saveInvoice(invoice));
     }
 
