@@ -1,10 +1,12 @@
 package com.api.water_sytem_management_java.services;
 
 
+import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
 import com.api.water_sytem_management_java.models.Payment;
 import com.api.water_sytem_management_java.repositories.PaymentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
@@ -29,8 +32,17 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public List<Payment> getPayments() {
-        return paymentRepository.findAllByOrderByCreatedAtDesc();
+    public List<PaymentOutput> getPayments() {
+        return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .stream()
+                .map(this::mapToPaymentOutput)
+                .collect(Collectors.toList());
+    }
+
+
+    private PaymentOutput mapToPaymentOutput(Payment payment) {
+
+        return payment.PaymentOutPut(payment);
     }
 
     public Optional<Payment> getPaymentById(UUID id) {

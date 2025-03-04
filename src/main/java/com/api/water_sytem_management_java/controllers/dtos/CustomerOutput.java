@@ -7,9 +7,23 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public record CustomerOutput(UUID id, String name, String contact, String address, Boolean active, Integer valve, Integer monthsInDebt,   String referenceMonth) {
+public record CustomerOutput(UUID id,
+                             String name,
+                             String contact,
+                             String address,
+                             Boolean active,
+                             Integer valve,
+                             Integer monthsInDebt,
+                             String referenceMonth) {
 
-    public CustomerOutput(UUID id, String name, String contact, String address, Boolean active, Integer valve, Integer monthsInDebt, String referenceMonth) {
+    public CustomerOutput(UUID id,
+                          String name,
+                          String contact,
+                          String address,
+                          Boolean active,
+                          Integer valve,
+                          Integer monthsInDebt,
+                          String referenceMonth) {
         this.id = id;
         this.name = name;
         this.contact = contact;
@@ -19,7 +33,6 @@ public record CustomerOutput(UUID id, String name, String contact, String addres
         this.monthsInDebt = monthsInDebt;
         this.referenceMonth= getReferenceMonth(monthsInDebt);
     }
-
 
 
     public static String getReferenceMonth(int n) {

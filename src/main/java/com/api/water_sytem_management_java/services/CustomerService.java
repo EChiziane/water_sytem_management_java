@@ -49,15 +49,6 @@ public class CustomerService {
 
     private CustomerOutput mapToCustomerOutput(Customer customer) {
         boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);
-        return new CustomerOutput(
-                customer.getId(),
-                customer.getName(),
-                customer.getContact(),
-                customer.getAddress(),
-                isActive,
-                customer.getValve(),
-                customer.getMonthsInDebt(),
-                CustomerOutput.getReferenceMonth(4)
-        );
+        return  customer.CustomerOutput(customer);
     }
 }

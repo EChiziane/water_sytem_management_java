@@ -1,11 +1,12 @@
 package com.api.water_sytem_management_java.controllers;
 
+import com.api.water_sytem_management_java.controllers.dtos.PaymentInput;
+import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.Payment;
 import com.api.water_sytem_management_java.repositories.CustomerRepository;
 import com.api.water_sytem_management_java.services.CustomerService;
 import com.api.water_sytem_management_java.services.PaymentService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,19 +31,17 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> createPayment(@RequestBody PaymentDto paymentDto) {
-      Customer customer= customerRepository.findById(paymentDto.getCustomerId())
+    public ResponseEntity<Payment> createPayment(@RequestBody PaymentInput paymentInput) {
+        Customer customer = customerRepository.findById(paymentInput.customerId())
               .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        Payment payment = new Payment() ;
-        BeanUtils.copyProperties(paymentDto,payment);
-        payment.setCustomer(customer);
+        Payment payment = paymentInput.toPayment(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.savePayment(payment));
     }
 
 
     @GetMapping
-    public ResponseEntity<List<Payment>> getPayments() {
+    public ResponseEntity<List<PaymentOutput>> getPayments() {
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.getPayments());
     }
 

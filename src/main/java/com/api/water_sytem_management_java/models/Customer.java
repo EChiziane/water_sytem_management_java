@@ -1,5 +1,8 @@
 package com.api.water_sytem_management_java.models;
+
+import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
 import jakarta.persistence.*;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,6 +34,20 @@ public class Customer implements Serializable {
 
     }
 
+
+    public CustomerOutput CustomerOutput(Customer customer){
+        return  new CustomerOutput(
+                customer.id,
+                customer.name,
+                customer.contact,
+                customer.address,
+               true,
+                customer.valve,
+                customer.monthsInDebt,
+                ""
+        );
+    }
+
     public Customer() {
 
     }
@@ -44,29 +61,10 @@ public class Customer implements Serializable {
         return name;
     }
 
-    public String getContact() {
-        return contact;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
     public CustomerStatus getStatus() {
         return status;
     }
 
-    public Integer getValve() {
-        return valve;
-    }
-
-    public Integer getMonthsInDebt() {
-        return monthsInDebt;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 
 
 }
