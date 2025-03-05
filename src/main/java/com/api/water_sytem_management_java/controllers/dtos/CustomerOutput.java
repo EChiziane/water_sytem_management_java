@@ -1,5 +1,7 @@
 package com.api.water_sytem_management_java.controllers.dtos;
 
+import com.api.water_sytem_management_java.models.CustomerStatus;
+
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -11,7 +13,7 @@ public record CustomerOutput(UUID id,
                              String name,
                              String contact,
                              String address,
-                             Boolean active,
+                             CustomerStatus status,
                              Integer valve,
                              Integer monthsInDebt,
                              String referenceMonth) {
@@ -20,7 +22,7 @@ public record CustomerOutput(UUID id,
                           String name,
                           String contact,
                           String address,
-                          Boolean active,
+                          CustomerStatus  status,
                           Integer valve,
                           Integer monthsInDebt,
                           String referenceMonth) {
@@ -28,7 +30,7 @@ public record CustomerOutput(UUID id,
         this.name = name;
         this.contact = contact;
         this.address = address;
-        this.active = active;
+        this.status = status;
         this.valve = valve;
         this.monthsInDebt = monthsInDebt;
         this.referenceMonth= getReferenceMonth(monthsInDebt);

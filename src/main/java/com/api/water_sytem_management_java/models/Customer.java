@@ -41,7 +41,7 @@ public class Customer implements Serializable {
                 customer.name,
                 customer.contact,
                 customer.address,
-               true,
+               customer.status,
                 customer.valve,
                 customer.monthsInDebt,
                 ""
