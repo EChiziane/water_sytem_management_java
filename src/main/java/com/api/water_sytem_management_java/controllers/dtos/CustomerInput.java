@@ -9,8 +9,8 @@ public record CustomerInput(
          String contact,
          String address,
          CustomerStatus status,
-         Integer valve,
-         Integer monthsInDebt){
+      byte valve,
+         byte monthsInDebt){
 
     public Customer toCustomer() {
      return  new Customer(name,

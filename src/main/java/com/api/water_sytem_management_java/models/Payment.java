@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Entity
-@Table(name = "tb_payment12")
+@Table(name = "tb_payment13")
 public class Payment implements Serializable {
 
     @Serial
@@ -58,7 +58,8 @@ public class Payment implements Serializable {
                 true,
                 payment.referenceMonth,
                 payment.numMonths,
-                payment.createdAt
+                payment.createdAt,
+                payment.paymentMethod
         );
     }
 
@@ -83,4 +84,15 @@ public class Payment implements Serializable {
     public void setId(UUID id) {
         this.id = id;
     }
+
+
+    public boolean customerHasDebt(){
+        return customer.hasOutstandingDebt();
+    }
+
+    public boolean isAmountGreaterThanDebt(){
+        return customer.isValueGreaterThanDebt(numMonths) ;
+    }
+
+
 }

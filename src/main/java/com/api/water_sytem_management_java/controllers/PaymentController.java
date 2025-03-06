@@ -23,11 +23,11 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final CustomerRepository customerRepository;
 
-    private  final CustomerService customerService;
-    public PaymentController(PaymentService paymentService, CustomerRepository customerRepository, CustomerService customerService) {
+
+    public PaymentController(PaymentService paymentService, CustomerRepository customerRepository) {
         this.paymentService = paymentService;
         this.customerRepository = customerRepository;
-        this.customerService = customerService;
+
     }
 
     @PostMapping

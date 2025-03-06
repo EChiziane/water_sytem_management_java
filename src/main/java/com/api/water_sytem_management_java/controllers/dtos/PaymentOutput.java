@@ -12,10 +12,11 @@ public record PaymentOutput(
         String referenceMonth,
 
         byte numMonths,
-        LocalDateTime paymentDate) {
+        LocalDateTime paymentDate,
+        String paymentMethod) {
 
 
-    public PaymentOutput(UUID id, UUID customerId, String customerName, Double amount, boolean status, String referenceMonth, byte numMonths, LocalDateTime paymentDate) {
+    public PaymentOutput(UUID id, UUID customerId, String customerName, Double amount, boolean status, String referenceMonth, byte numMonths, LocalDateTime paymentDate, String paymentMethod) {
         this.id = id;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -23,6 +24,7 @@ public record PaymentOutput(
         this.status = status;
         this.referenceMonth = referenceMonth;
         this.paymentDate = paymentDate;
+        this.paymentMethod = paymentMethod;
         this.numMonths = numMonths;
     }
 }

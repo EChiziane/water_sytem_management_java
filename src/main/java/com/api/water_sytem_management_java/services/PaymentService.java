@@ -29,6 +29,16 @@ public class PaymentService {
 
     @Transactional
     public Payment savePayment(Payment payment) {
+
+        if(!payment.customerHasDebt())
+        {       throw new RuntimeException("Customer has no debt");
+
+        }
+      if(payment.isAmountGreaterThanDebt()){
+          throw new RuntimeException("Your months are more than you have");
+
+        }
+
         return paymentRepository.save(payment);
     }
 

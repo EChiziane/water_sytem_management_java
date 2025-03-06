@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_customers")
+@Table(name = "tb_customers6")
 public class Customer implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -20,11 +20,11 @@ public class Customer implements Serializable {
     private String contact;
     private String address;
     private CustomerStatus status;
-    private Integer valve;
-    private Integer monthsInDebt; // Total number of months in debt
+    private byte valve;
+    private byte monthsInDebt; // Total number of months in debt
     private LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
 
-    public Customer(String name, String contact, String address, CustomerStatus status, Integer valve, Integer monthsInDebt) {
+    public Customer(String name, String contact, String address, CustomerStatus status, byte valve, byte monthsInDebt) {
         this.name = name;
         this.contact = contact;
         this.address = address;
@@ -44,7 +44,8 @@ public class Customer implements Serializable {
                customer.status,
                 customer.valve,
                 customer.monthsInDebt,
-                ""
+                "",
+                customer.createdAt
         );
     }
 
@@ -60,11 +61,15 @@ public class Customer implements Serializable {
     public String getName() {
         return name;
     }
-
     public CustomerStatus getStatus() {
         return status;
     }
 
-
+ public  boolean hasOutstandingDebt(){
+        return monthsInDebt > 0;
+ }
+ public boolean isValueGreaterThanDebt(byte value){
+        return value > monthsInDebt;
+ }
 
 }
