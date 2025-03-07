@@ -39,6 +39,7 @@ public class PaymentService {
 
         }
 
+      payment.dowGradeMonthsOnDebt();
         return paymentRepository.save(payment);
     }
 

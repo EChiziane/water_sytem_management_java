@@ -86,6 +86,17 @@ public class Payment implements Serializable {
     }
 
 
+    public void dowGradeMonthsOnDebt(){
+       if(customerHasDebt() &&  !isAmountGreaterThanDebt() ){
+           customer.updateDebt(numMonths);
+        }
+
+
+    }
+    public  void upGradeMonthsOnDebt(){
+        customer.updateDebt((byte)-1);
+    }
+
     public boolean customerHasDebt(){
         return customer.hasOutstandingDebt();
     }

@@ -71,5 +71,9 @@ public class Customer implements Serializable {
  public boolean isValueGreaterThanDebt(byte value){
         return value > monthsInDebt;
  }
+public void updateDebt(byte value){
+        monthsInDebt -= value;
+}
+
 
 }
