@@ -96,11 +96,9 @@ public class Payment implements Serializable {
     public  void upGradeMonthsOnDebt(){
         customer.updateDebt((byte)-1);
     }
-
     public boolean customerHasDebt(){
         return customer.hasOutstandingDebt();
     }
-
     public boolean isAmountGreaterThanDebt(){
         return customer.isValueGreaterThanDebt(numMonths) ;
     }
