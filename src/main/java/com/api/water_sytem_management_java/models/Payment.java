@@ -19,6 +19,62 @@ public class Payment implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getReferenceMonth() {
+        return referenceMonth;
+    }
+
+    public void setReferenceMonth(String referenceMonth) {
+        this.referenceMonth = referenceMonth;
+    }
+
+    public byte getNumMonths() {
+        return numMonths;
+    }
+
+    public void setNumMonths(byte numMonths) {
+        this.numMonths = numMonths;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
