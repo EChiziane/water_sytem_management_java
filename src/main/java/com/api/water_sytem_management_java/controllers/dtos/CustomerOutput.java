@@ -18,13 +18,13 @@ public record CustomerOutput(UUID id,
                              byte valve,
                              byte monthsInDebt,
                              String referenceMonth,
-                            LocalDateTime createdAt) {
+                             LocalDateTime createdAt) {
 
     public CustomerOutput(UUID id,
                           String name,
                           String contact,
                           String address,
-                          CustomerStatus  status,
+                          CustomerStatus status,
                           byte valve,
                           byte monthsInDebt,
                           String referenceMonth,
@@ -37,7 +37,7 @@ public record CustomerOutput(UUID id,
         this.valve = valve;
         this.monthsInDebt = monthsInDebt;
         this.createdAt = createdAt;
-        this.referenceMonth= getReferenceMonth(monthsInDebt);
+        this.referenceMonth = getReferenceMonth(monthsInDebt);
     }
 
 
