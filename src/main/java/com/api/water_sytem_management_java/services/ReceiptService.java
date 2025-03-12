@@ -42,10 +42,10 @@ public class ReceiptService {
             addPageBorder(writer);
 
             // Adicionando a marca d'água "Transportes Chiziane"
-            addWatermark(writer, "Transportes Chiziane");
+            addWatermark(writer, "Aguas Chiziane");
 
             // Dados da empresa no canto superior esquerdo com "Transportes Chiziane" em azul e maior
-            Font companyNameFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.BLUE);
+            Font companyNameFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, BaseColor.BLUE);
             Paragraph companyName = new Paragraph("Aguas Chiziane", companyNameFont);
             document.add(companyName);
 
@@ -115,17 +115,17 @@ public class ReceiptService {
             // Espaço entre o texto de recebimento
             document.add(new Paragraph("\n"));
 
-            // Texto de recebimento do pagamento com formatação em itálico e linha abaixo
-            Font italicFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
+            // Texto de recebimento do pagamento (sem itálico)
+            Font regularFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
             Paragraph paymentText = new Paragraph();
             paymentText.add("Recebemos do ");
-            paymentText.add(new Chunk(payment.getCustomer().getName(), italicFont));
+            paymentText.add(payment.getCustomer().getName());
             paymentText.add(", valor ");
-            paymentText.add(new Chunk("€" + payment.getAmount(), italicFont));
+            paymentText.add("MZN " + payment.getAmount());
             paymentText.add(" referentes ao pagamento de água de ");
-            paymentText.add(new Chunk(String.valueOf(payment.getNumMonths()), italicFont));
+            paymentText.add(String.valueOf(payment.getNumMonths()));
             paymentText.add(" meses: ");
-            paymentText.add(new Chunk(payment.getReferenceMonth(), italicFont));
+            paymentText.add(payment.getReferenceMonth());
             paymentText.add(". Obrigado!");
             document.add(paymentText);
 
@@ -135,26 +135,38 @@ public class ReceiptService {
             // Criando a tabela de detalhes de pagamento
             PdfPTable paymentDetailsTable = new PdfPTable(2);
             paymentDetailsTable.setWidths(new float[]{2, 3});
+            paymentDetailsTable.setSpacingBefore(10f);
+            paymentDetailsTable.setSpacingAfter(10f);
 
             // Cabeçalho da tabela
-            paymentDetailsTable.addCell("Descrição");
-            paymentDetailsTable.addCell("Valor");
+            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.WHITE);
+            PdfPCell descriptionHeader = new PdfPCell(new Phrase("Descrição", tableHeaderFont));
+            descriptionHeader.setBackgroundColor(BaseColor.BLACK);
+            descriptionHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
+            paymentDetailsTable.addCell(descriptionHeader);
+
+            PdfPCell valueHeader = new PdfPCell(new Phrase("Valor", tableHeaderFont));
+            valueHeader.setBackgroundColor(BaseColor.BLACK);
+            valueHeader.setHorizontalAlignment(Element.ALIGN_CENTER);
+            paymentDetailsTable.addCell(valueHeader);
 
             // Adicionando dados à tabela de detalhes de pagamento
-            paymentDetailsTable.addCell("Método de Pagamento");
-            paymentDetailsTable.addCell(payment.getPaymentMethod());
+            Font tableContentFont = FontFactory.getFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
 
-            paymentDetailsTable.addCell("Valor");
-            paymentDetailsTable.addCell("€" + payment.getAmount());
+            paymentDetailsTable.addCell(new Phrase("Método de Pagamento", tableContentFont));
+            paymentDetailsTable.addCell(new Phrase(payment.getPaymentMethod(), tableContentFont));
 
-            paymentDetailsTable.addCell("Referência Mês");
-            paymentDetailsTable.addCell(payment.getReferenceMonth());
+            paymentDetailsTable.addCell(new Phrase("Valor", tableContentFont));
+            paymentDetailsTable.addCell(new Phrase("MZN " + payment.getAmount(), tableContentFont));
 
-            paymentDetailsTable.addCell("Número de Meses");
-            paymentDetailsTable.addCell(String.valueOf(payment.getNumMonths()));
+            paymentDetailsTable.addCell(new Phrase("Referência Mês", tableContentFont));
+            paymentDetailsTable.addCell(new Phrase(payment.getReferenceMonth(), tableContentFont));
 
-            paymentDetailsTable.addCell("Data de Criação");
-            paymentDetailsTable.addCell(payment.getCreatedAt().toString());
+            paymentDetailsTable.addCell(new Phrase("Número de Meses", tableContentFont));
+            paymentDetailsTable.addCell(new Phrase(String.valueOf(payment.getNumMonths()), tableContentFont));
+
+            paymentDetailsTable.addCell(new Phrase("Data de Criação", tableContentFont));
+            paymentDetailsTable.addCell(new Phrase(payment.getCreatedAt().toString(), tableContentFont));
 
             // Adicionando a tabela de detalhes de pagamento ao documento
             document.add(paymentDetailsTable);
@@ -163,7 +175,7 @@ public class ReceiptService {
             document.add(new Paragraph("\n"));
 
             // Confirmar pagamento
-            document.add(new Paragraph("Pagamento Confirmado: " + (payment.getConfirmed() ? "Sim" : "Não"), customerFont));
+            document.add(new Paragraph("Pagamento Confirmado: " + (payment.getConfirmed() ? "Sim" : "Não"), tableContentFont));
 
             // Adicionar linha de assinatura centralizada e com 50% da largura da página
             document.add(new Paragraph("\n\n"));
@@ -206,14 +218,12 @@ public class ReceiptService {
         PdfContentByte content = writer.getDirectContentUnder();
 
         // Definir a fonte para a marca d'água
-        Font watermarkFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 100, BaseColor.LIGHT_GRAY);
+        Font watermarkFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 50, BaseColor.LIGHT_GRAY);
+
+        // Definir a marca d'água
         Phrase watermark = new Phrase(watermarkText, watermarkFont);
 
-        // Definir a posição da marca d'água (centrada na página)
-        float x = 297.5f;
-        float y = 421.0f;
-
-        // Adicionar a marca d'água no fundo
-        ColumnText.showTextAligned(content, Element.ALIGN_CENTER, watermark, x, y, 45);
+        // Centralizar a marca d'água na página
+        ColumnText.showTextAligned(content, Element.ALIGN_CENTER, watermark, 298, 421, 45);
     }
 }
