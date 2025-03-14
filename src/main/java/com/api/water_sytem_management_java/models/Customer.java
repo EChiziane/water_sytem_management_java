@@ -22,7 +22,7 @@ public class Customer implements Serializable {
     private CustomerStatus status;
     private byte valve;
     private byte monthsInDebt; // Total number of months in debt
-    private LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
+    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
 
     public Customer(String name, String contact, String address, CustomerStatus status, byte valve, byte monthsInDebt) {
         this.name = name;
@@ -35,13 +35,17 @@ public class Customer implements Serializable {
     }
 
 
-    public CustomerOutput CustomerOutput(Customer customer){
-        return  new CustomerOutput(
+    public Customer() {
+
+    }
+
+    public CustomerOutput CustomerOutput(Customer customer) {
+        return new CustomerOutput(
                 customer.id,
                 customer.name,
                 customer.contact,
                 customer.address,
-               customer.status,
+                customer.status,
                 customer.valve,
                 customer.monthsInDebt,
                 "",
@@ -49,31 +53,33 @@ public class Customer implements Serializable {
         );
     }
 
-    public Customer() {
-
-    }
     public UUID getId() {
         return id;
     }
+
     public void setId(UUID id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public CustomerStatus getStatus() {
         return status;
     }
 
- public  boolean hasOutstandingDebt(){
+    public boolean hasOutstandingDebt() {
         return monthsInDebt > 0;
- }
- public boolean isValueGreaterThanDebt(byte value){
+    }
+
+    public boolean isValueGreaterThanDebt(byte value) {
         return value > monthsInDebt;
- }
-public void updateDebt(byte value){
+    }
+
+    public void updateDebt(byte value) {
         monthsInDebt -= value;
-}
+    }
 
 
 }

@@ -6,11 +6,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-
 
 
 @Entity
@@ -40,14 +37,14 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private UserRole role = UserRole.NORMAL;
+    private final UserRole role = UserRole.NORMAL;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-    private Boolean isActive = true;
+    private final Boolean isActive = true;
 
-    public User( String name, String userName, String email, String password) {
+    public User(String name, String userName, String email, String password) {
         this.name = name;
         this.userName = userName;
         this.email = email;
@@ -58,7 +55,7 @@ public class User {
 
     }
 
-    public UserOutPut userOutPut (User user){
+    public UserOutPut userOutPut(User user) {
         return new UserOutPut(
                 user.id,
                 user.name,
@@ -70,5 +67,11 @@ public class User {
     }
 
 
+    public @NotBlank(message = "A senha não pode estar vazia") String getPassword() {
+        return password;
+    }
 
+    public void setPassword(@NotBlank(message = "A senha não pode estar vazia") String password) {
+        this.password = password;
+    }
 }

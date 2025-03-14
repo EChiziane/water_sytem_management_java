@@ -5,7 +5,6 @@ import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.Payment;
 import com.api.water_sytem_management_java.repositories.CustomerRepository;
-import com.api.water_sytem_management_java.services.CustomerService;
 import com.api.water_sytem_management_java.services.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +32,7 @@ public class PaymentController {
     @PostMapping
     public ResponseEntity<Payment> createPayment(@RequestBody PaymentInput paymentInput) {
         Customer customer = customerRepository.findById(paymentInput.customerId())
-              .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         Payment payment = paymentInput.toPayment(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.savePayment(payment));

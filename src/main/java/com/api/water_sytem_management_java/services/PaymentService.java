@@ -27,44 +27,6 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    @Transactional
-    public Payment savePayment(Payment payment) {
-
-        if(!payment.customerHasDebt())
-        {       throw new RuntimeException("Customer has no debt");
-
-        }
-      if(payment.isAmountGreaterThanDebt()){
-          throw new RuntimeException("Your months are more than you have");
-
-        }
-
-      payment.dowGradeMonthsOnDebt();
-        return paymentRepository.save(payment);
-    }
-
-    public List<PaymentOutput> getPayments() {
-        return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
-                .stream()
-                .map(this::mapToPaymentOutput)
-                .collect(Collectors.toList());
-    }
-
-
-    private PaymentOutput mapToPaymentOutput(Payment payment) {
-
-        return payment.PaymentOutPut(payment);
-    }
-
-    public Optional<Payment> getPaymentById(UUID id) {
-        return paymentRepository.findById(id);
-    }
-
-    @Transactional
-    public void deletePayment(UUID id) {
-        paymentRepository.deleteById(id);
-    }
-
     public static String getMonthsToPay(int monthsToPay, int monthsInDebt) {
         if (monthsToPay <= 0 || monthsInDebt <= 0) {
             throw new IllegalArgumentException("Os meses a pagar e os meses em dívida devem ser maiores que 0.");
@@ -105,6 +67,42 @@ public class PaymentService {
         return monthsString.toString();
     }
 
+    @Transactional
+    public Payment savePayment(Payment payment) {
+
+        if (!payment.customerHasDebt()) {
+            throw new RuntimeException("Customer has no debt");
+
+        }
+        if (payment.isAmountGreaterThanDebt()) {
+            throw new RuntimeException("Your months are more than you have");
+
+        }
+
+        payment.dowGradeMonthsOnDebt();
+        return paymentRepository.save(payment);
+    }
+
+    public List<PaymentOutput> getPayments() {
+        return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .stream()
+                .map(this::mapToPaymentOutput)
+                .collect(Collectors.toList());
+    }
+
+    private PaymentOutput mapToPaymentOutput(Payment payment) {
+
+        return payment.PaymentOutPut(payment);
+    }
+
+    public Optional<Payment> getPaymentById(UUID id) {
+        return paymentRepository.findById(id);
+    }
+
+    @Transactional
+    public void deletePayment(UUID id) {
+        paymentRepository.deleteById(id);
+    }
 
 
 }

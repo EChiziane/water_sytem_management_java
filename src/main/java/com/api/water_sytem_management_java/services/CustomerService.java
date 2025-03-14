@@ -49,6 +49,6 @@ public class CustomerService {
 
     private CustomerOutput mapToCustomerOutput(Customer customer) {
         boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);
-        return  customer.CustomerOutput(customer);
+        return customer.CustomerOutput(customer);
     }
 }
