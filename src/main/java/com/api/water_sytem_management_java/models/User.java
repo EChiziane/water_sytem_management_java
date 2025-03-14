@@ -1,5 +1,6 @@
 package com.api.water_sytem_management_java.models;
 
+import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -55,6 +56,17 @@ public class User {
 
     public User() {
 
+    }
+
+    public UserOutPut userOutPut (User user){
+        return new UserOutPut(
+                user.id,
+                user.name,
+                user.role,
+                user.userName,
+                user.email,
+                user.password
+        );
     }
 
 
