@@ -1,17 +1,10 @@
 package com.api.water_sytem_management_java.repositories;
 
-import com.api.water_sytem_management_java.models.User;
-import org.springframework.data.domain.Sort;
+
+import com.api.water_sytem_management_java.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-@Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
-    List<User> findAll(Sort sort);
-    User findByUserName(String username);
-   Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, String> {
+    UserDetails findByLogin(String login);
 }
