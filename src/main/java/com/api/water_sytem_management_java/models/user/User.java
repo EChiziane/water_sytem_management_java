@@ -1,6 +1,6 @@
 
 
-package com.api.water_sytem_management_java.domain.user;
+package com.api.water_sytem_management_java.models.user;
 
 
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
 package com.api.water_sytem_management_java.services;
 
-import com.api.water_sytem_management_java.domain.user.User;
+import com.api.water_sytem_management_java.models.user.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

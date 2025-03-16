@@ -1,7 +1,7 @@
-package com.api.water_sytem_management_java.domain.product;
+package com.api.water_sytem_management_java.models.product;
 
 
-import com.api.water_sytem_management_java.dtos.ProductRequestDTO;
+import com.api.water_sytem_management_java.controllers.dtos.ProductRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

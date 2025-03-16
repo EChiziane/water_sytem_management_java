@@ -1,4 +1,4 @@
-package com.api.water_sytem_management_java.dtos;
+package com.api.water_sytem_management_java.controllers.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

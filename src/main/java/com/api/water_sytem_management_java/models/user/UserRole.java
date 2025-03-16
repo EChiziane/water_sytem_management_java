@@ -1,4 +1,4 @@
-package com.api.water_sytem_management_java.domain.user;
+package com.api.water_sytem_management_java.models.user;
 
 public enum UserRole {
     ADMIN("admin"),

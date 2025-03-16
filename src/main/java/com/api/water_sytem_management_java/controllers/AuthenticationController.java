@@ -1,10 +1,10 @@
 package com.api.water_sytem_management_java.controllers;
 
 
-import com.api.water_sytem_management_java.domain.user.User;
-import com.api.water_sytem_management_java.dtos.AuthenticationDTO;
-import com.api.water_sytem_management_java.dtos.LoginResponseDTO;
-import com.api.water_sytem_management_java.dtos.RegisterDTO;
+import com.api.water_sytem_management_java.models.user.User;
+import com.api.water_sytem_management_java.controllers.dtos.AuthenticationDTO;
+import com.api.water_sytem_management_java.controllers.dtos.LoginResponseDTO;
+import com.api.water_sytem_management_java.controllers.dtos.RegisterDTO;
 import com.api.water_sytem_management_java.repositories.UserRepository;
 import com.api.water_sytem_management_java.services.TokenService;
 import jakarta.validation.Valid;
@@ -13,11 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
