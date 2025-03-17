@@ -3,6 +3,7 @@
 package com.api.water_sytem_management_java.models.user;
 
 
+import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,12 +31,29 @@ public class User implements UserDetails {
     private String login;
     private String password;
     private UserRole role;
+    private String email;
+    private String phone;
+    private String name;
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
-    public User(String login, String password, UserRole role){
+
+
+
+
+    public User(String login, String password, UserRole role, String email, String phone, String name) {
         this.login = login;
         this.password = password;
         this.role = role;
+        this.email = email;
+        this.phone = phone;
+        this.name = name;
     }
+
+    public UserOutPut UserOutPut(){
+        return  new UserOutPut(name,email,phone,login,role,createdAt);
+    }
+
+
 
 
     @Override
