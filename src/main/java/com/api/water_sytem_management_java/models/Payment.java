@@ -2,7 +2,6 @@ package com.api.water_sytem_management_java.models;
 
 import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
 import jakarta.persistence.*;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -19,15 +18,18 @@ public class Payment implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     private Double amount;
     private String referenceMonth;
     private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private final LocalDateTime createdAt = LocalDateTime.now();
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -41,6 +43,7 @@ public class Payment implements Serializable {
         this.confirmed = confirmed;
         this.referenceMonth = getReferenceMonth(numMonths);
     }
+
 
     public Payment() {
     }
@@ -56,62 +59,6 @@ public class Payment implements Serializable {
                 .mapToObj(i -> today.minusMonths(n - 1 - i))
                 .map(date -> date.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "PT")))
                 .collect(Collectors.joining(", "));
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public String getReferenceMonth() {
-        return referenceMonth;
-    }
-
-    public void setReferenceMonth(String referenceMonth) {
-        this.referenceMonth = referenceMonth;
-    }
-
-    public byte getNumMonths() {
-        return numMonths;
-    }
-
-    public void setNumMonths(byte numMonths) {
-        this.numMonths = numMonths;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     // Métodos de instância
