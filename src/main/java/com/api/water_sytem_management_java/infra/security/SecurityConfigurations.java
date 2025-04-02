@@ -55,7 +55,7 @@ public class SecurityConfigurations {
         // Adicionando múltiplas origens permitidas (localhost, Vercel e ngrok)
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
-                "https://customer-dashboard-angular-ng-zorro-o7wdnf20q.vercel.app",
+                "https://customer-dashboard-angular-ng-zorro-s2hx.vercel.app",
                 "https://778b-197-218-60-63.ngrok-free.app"
         ));
 
