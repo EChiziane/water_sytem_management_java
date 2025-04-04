@@ -24,6 +24,8 @@ public class Customer implements Serializable {
     private byte monthsInDebt; // Total number of months in debt
     private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
 
+
+
     public Customer(String name, String contact, String address, CustomerStatus status, byte valve, byte monthsInDebt) {
         this.name = name;
         this.contact = contact;
@@ -67,6 +69,51 @@ public class Customer implements Serializable {
 
     public CustomerStatus getStatus() {
         return status;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setStatus(CustomerStatus status) {
+        this.status = status;
+    }
+
+    public byte getValve() {
+        return valve;
+    }
+
+    public void setValve(byte valve) {
+        this.valve = valve;
+    }
+
+    public byte getMonthsInDebt() {
+        return monthsInDebt;
+    }
+
+    public void setMonthsInDebt(byte monthsInDebt) {
+        this.monthsInDebt = monthsInDebt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public boolean hasOutstandingDebt() {

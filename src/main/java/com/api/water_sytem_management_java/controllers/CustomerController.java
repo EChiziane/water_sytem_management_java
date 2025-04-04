@@ -30,6 +30,16 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerOutput> updateCustomer(@PathVariable UUID id, @RequestBody CustomerInput customerInput) {
+        Optional<CustomerOutput> updatedCustomer = customerService.updateCustomer(id, customerInput);
+        return updatedCustomer
+                .map(customer -> ResponseEntity.ok().body(customer))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
     @GetMapping
     public ResponseEntity<List<CustomerOutput>> getAllCustomers() {
         List<CustomerOutput> customers = customerService.getAllCustomers();

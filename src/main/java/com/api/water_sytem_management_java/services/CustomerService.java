@@ -1,6 +1,7 @@
 package com.api.water_sytem_management_java.services;
 
 
+import com.api.water_sytem_management_java.controllers.dtos.CustomerInput;
 import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.CustomerStatus;
@@ -46,6 +47,23 @@ public class CustomerService {
     public void deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
     }
+
+    @Transactional
+    public Optional<CustomerOutput> updateCustomer(UUID id, CustomerInput input) {
+        return customerRepository.findById(id)
+                .map(existingCustomer -> {
+                    existingCustomer.setName(input.name());
+                    existingCustomer.setContact(input.contact());
+                    existingCustomer.setAddress(input.address());
+                    existingCustomer.setStatus(input.status());
+                    existingCustomer.setValve(input.valve());
+                    existingCustomer.setMonthsInDebt(input.monthsInDebt());
+                    Customer updated = customerRepository.save(existingCustomer);
+                    return mapToCustomerOutput(updated);
+                });
+    }
+
+
 
     private CustomerOutput mapToCustomerOutput(Customer customer) {
         boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);
