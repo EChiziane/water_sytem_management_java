@@ -1,7 +1,9 @@
 package com.api.water_sytem_management_java.services;
 
 
+import com.api.water_sytem_management_java.controllers.dtos.PaymentInput;
 import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
+import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.Payment;
 import com.api.water_sytem_management_java.repositories.PaymentRepository;
 import jakarta.transaction.Transactional;
@@ -102,6 +104,20 @@ public class PaymentService {
     @Transactional
     public void deletePayment(UUID id) {
         paymentRepository.deleteById(id);
+    }
+    @Transactional
+    public Payment updatePayment(UUID id, PaymentInput paymentInput, Customer customer) {
+        Payment existingPayment = paymentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Payment not found"));
+
+        existingPayment.setAmount(paymentInput.amount());
+        existingPayment.setNumMonths(paymentInput.numMonths());
+        existingPayment.setPaymentMethod(paymentInput.paymentMethod());
+        existingPayment.setConfirmed(paymentInput.confirmed());
+        existingPayment.setReferenceMonth(Payment.getReferenceMonth(paymentInput.numMonths()));
+        existingPayment.setCustomer(customer);
+
+        return paymentRepository.save(existingPayment);
     }
 
 

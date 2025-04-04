@@ -39,6 +39,20 @@ public class PaymentController {
         this.paymentRepository = paymentRepository;
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Payment> updatePayment(@PathVariable UUID id, @RequestBody PaymentInput paymentInput) {
+        Optional<Customer> customerOptional = customerRepository.findById(paymentInput.customerId());
+        if (customerOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Customer customer = customerOptional.get();
+
+        Payment updatedPayment = paymentService.updatePayment(id, paymentInput, customer);
+        return ResponseEntity.ok(updatedPayment);
+    }
+
+
 
     @PostMapping
     public ResponseEntity<Payment> createPayment(@RequestBody PaymentInput paymentInput) throws IOException {
