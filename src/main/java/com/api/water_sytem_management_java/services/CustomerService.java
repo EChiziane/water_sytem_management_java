@@ -1,8 +1,9 @@
 package com.api.water_sytem_management_java.services;
 
-
+import com.api.water_sytem_management_java.CustomerNotFoundException;
 import com.api.water_sytem_management_java.controllers.dtos.CustomerInput;
 import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
+
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.CustomerStatus;
 import com.api.water_sytem_management_java.repositories.CustomerRepository;
@@ -38,10 +39,10 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<CustomerOutput> getCustomerById(UUID id) {
+    public CustomerOutput getCustomerById(UUID id) {
         return customerRepository.findById(id)
-                .map(this::mapToCustomerOutput);
-
+                .map(this::mapToCustomerOutput)
+                .orElseThrow(() -> new CustomerNotFoundException("No user found with ID: " + id));
     }
 
     public void deleteCustomer(UUID id) {
@@ -62,8 +63,6 @@ public class CustomerService {
                     return mapToCustomerOutput(updated);
                 });
     }
-
-
 
     private CustomerOutput mapToCustomerOutput(Customer customer) {
         boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);

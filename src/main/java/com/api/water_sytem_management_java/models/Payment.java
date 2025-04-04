@@ -30,7 +30,7 @@ public class Payment implements Serializable {
     private Boolean confirmed;
     private final LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE )
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
