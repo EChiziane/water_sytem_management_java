@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 @Repository
-public interface CarloadRepository  extends JpaRepository<CarLoad, UUID> {
+public interface   CarLoadRepository extends JpaRepository<CarLoad, UUID> {
 }

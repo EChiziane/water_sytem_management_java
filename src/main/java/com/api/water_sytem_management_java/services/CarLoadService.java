@@ -1,51 +1,56 @@
 package com.api.water_sytem_management_java.services;
 
-import com.api.water_sytem_management_java.CustomerNotFoundException;
-import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
+
 import com.api.water_sytem_management_java.models.CarLoad;
-import com.api.water_sytem_management_java.repositories.CarloadRepository;
+import com.api.water_sytem_management_java.controllers.dtos.CarLoadInput;
+import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
+import com.api.water_sytem_management_java.repositories.CarLoadRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
 public class CarLoadService {
-    private  final CarloadRepository carloadRepository;
 
-    public CarLoadService(CarloadRepository carloadRepository) {
-        this.carloadRepository = carloadRepository;
-    }
-@Transactional
-    public CarLoad createCarload(CarLoad carLoad) {
+    private final CarLoadRepository carLoadRepository;
 
-        return carloadRepository.save(carLoad);
+    @Autowired
+    public CarLoadService(CarLoadRepository carLoadRepository) {
+        this.carLoadRepository = carLoadRepository;
     }
 
-    public List<CarLoadOutPut> getAllCarloads() {
+    @Transactional
+    public CarLoad createCarLoad(CarLoad carLoad) {
+        return carLoadRepository.save(carLoad);
+    }
 
-        return carloadRepository.findAll(Sort.by(Sort.Direction.DESC,"createdAt"))
-        .stream()
-                .map(this::mapToCarloadOutPut)
+    public List<CarLoadOutPut> getAllCarLoads() {
+        return carLoadRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+                .stream()
+                .map(this::mapToCarLoadOutput)
                 .collect(Collectors.toList());
     }
 
-
-
-    public CarLoadOutPut getCarloadById(UUID id) {
-        return carloadRepository.findById(id)
-                .map(this::mapToCarloadOutPut)
-                .orElseThrow(() -> new CustomerNotFoundException("No user found with ID: " + id));
+    public CarLoadOutPut getCarLoadById(UUID id) {
+        return carLoadRepository.findById(id)
+                .map(this::mapToCarLoadOutput)
+                .orElseThrow(() -> new CarLoadNotFoundException("No car load found with ID: " + id));
     }
 
-    public void deleteCarload(UUID id) {
-        carloadRepository.deleteById(id);
+    public void deleteCarLoad(UUID id) {
+        carLoadRepository.deleteById(id);
     }
-    private CarLoadOutPut mapToCarloadOutPut(CarLoad carLoad){
-        return  carLoad.toCarLoadOutPut();
+
+
+
+    private CarLoadOutPut mapToCarLoadOutput(CarLoad carLoad) {
+
+        return carLoad.toCarLoadOutPut();
     }
 }
