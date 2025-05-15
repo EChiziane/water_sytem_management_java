@@ -1,8 +1,7 @@
 package com.api.water_sytem_management_java.controllers;
 
-
+import com.api.water_sytem_management_java.controllers.dtos.CarLoadInput;
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
-import com.api.water_sytem_management_java.controllers.dtos.CarloadInput;
 import com.api.water_sytem_management_java.models.CarLoad;
 import com.api.water_sytem_management_java.services.CarLoadService;
 import org.springframework.http.HttpStatus;
@@ -16,35 +15,36 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/carloads")
 public class CarLoadController {
-    private final CarLoadService carloadService;
 
-    public CarLoadController(CarLoadService carloadService) {
-        this.carloadService = carloadService;
+    private final CarLoadService carLoadService;
+
+    public CarLoadController(CarLoadService carLoadService) {
+        this.carLoadService = carLoadService;
     }
 
     @PostMapping
-    public ResponseEntity<CarLoad> createCarload(@RequestBody CarloadInput carloadInput){
-        CarLoad carLoad= carloadInput.toCarLoad();
-        CarLoad savedCarload= carloadService.createCarload(carLoad);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(savedCarload);
+    public ResponseEntity<CarLoad> createCarLoad(@RequestBody CarLoadInput carLoadInput) {
+        CarLoad carLoad = carLoadInput.toCarLoad(); // Você deve ter este método no DTO
+        CarLoad savedCarLoad = carLoadService.createCarLoad(carLoad);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCarLoad);
     }
+
 
     @GetMapping
-    public  ResponseEntity<List<CarLoadOutPut>> getAllCarloads(){
-        List<CarLoadOutPut> carloads= carloadService.getAllCarloads();
-        return  ResponseEntity.ok(carloads);
-
+    public ResponseEntity<List<CarLoadOutPut>> getAllCarLoads() {
+        List<CarLoadOutPut> carLoads = carLoadService.getAllCarLoads();
+        return ResponseEntity.ok(carLoads);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<CarLoadOutPut> getCarloadById(@PathVariable UUID id){
-        CarLoadOutPut carload= carloadService.getCarloadById(id);
-        return ResponseEntity.ok(carload);
+    public ResponseEntity<CarLoadOutPut> getCarLoadById(@PathVariable UUID id) {
+        CarLoadOutPut carLoad = carLoadService.getCarLoadById(id);
+        return ResponseEntity.ok(carLoad);
     }
 
-    @DeleteMapping ("/{id}")
-    public ResponseEntity<Void> deleteCarload(@PathVariable UUID id){
-        carloadService.deleteCarload(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCarLoad(@PathVariable UUID id) {
+        carLoadService.deleteCarLoad(id);
         return ResponseEntity.noContent().build();
     }
-
 }

@@ -2,60 +2,73 @@ package com.api.water_sytem_management_java.models;
 
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.io.Serial;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "tb_carloads")
-@Entity(name = "tb_carloads")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-
-public class CarLoad {
+@Entity
+@Table(name = "tb_carloads")
+public class CarLoad implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private  String ClientName;
-    private  String PhoneNumber;
-    private String MaterialName;
-    private String Destination;
-    private Double totalRevenue;
-    private Double totalExpenses;
-    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
+    private String deliveryDestination;    // Final delivery location
+    private String customerName;           // Name of the customer receiving materials
+    private String logisticsManagerName;   // Person managing the shipment
+    private String assignedDriverName;     // Driver responsible for the delivery
+    private String transportedMaterial;    // Name/type of material being delivered
+    private String carloadBatchName;     // Name of the delivery sprint or batch
+    private String customerPhoneNumber;    // Contact phone number of the customer
+    private BigDecimal totalSpent;         // Money spent on the delivery
+    private BigDecimal totalEarnings;      // Revenue from the delivery
+    private String deliveryStatus;         // Current status: e.g., "pending", "completed"
 
-
-    public CarLoad(String clientName,
-                   String phoneNumber,
-                   String materialName,
-                   String destination,
-                   Double totalRevenue,
-                   Double totalExpenses) {
-        this.ClientName=clientName;
-        this.PhoneNumber=phoneNumber;
-        this.MaterialName=materialName;
-        this.Destination=destination;
-        this.totalRevenue=totalRevenue;
-        this.totalExpenses= totalExpenses;
+    public CarLoad() {
     }
 
-    public CarLoadOutPut toCarLoadOutPut(){
-        return  new CarLoadOutPut(id,
-                ClientName,
-                PhoneNumber,
-                MaterialName,
-                Destination,
-                totalRevenue,
-                totalExpenses,
-                createdAt);
+    public CarLoad(String deliveryDestination,
+                   String customerName,
+                   String logisticsManagerName,
+                   String assignedDriverName,
+                   String transportedMaterial,
+                   String carloadBatchName,
+                   String customerPhoneNumber,
+                   BigDecimal totalSpent,
+                   BigDecimal totalEarnings,
+                   String deliveryStatus) {
+        this.deliveryDestination = deliveryDestination;
+        this.customerName = customerName;
+        this.logisticsManagerName = logisticsManagerName;
+        this.assignedDriverName = assignedDriverName;
+        this.transportedMaterial = transportedMaterial;
+        this.carloadBatchName = carloadBatchName;
+        this.customerPhoneNumber = customerPhoneNumber;
+        this.totalSpent = totalSpent;
+        this.totalEarnings = totalEarnings;
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    public CarLoadOutPut toCarLoadOutPut() {
+        return new CarLoadOutPut(
+                deliveryDestination,
+                customerName,
+                logisticsManagerName,
+                assignedDriverName,
+                transportedMaterial,
+                carloadBatchName,
+                customerPhoneNumber,
+                totalSpent,
+                totalEarnings,
+                deliveryStatus
+        );
     }
 
 }

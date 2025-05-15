@@ -2,6 +2,7 @@ package com.api.water_sytem_management_java.models;
 
 import com.api.water_sytem_management_java.controllers.dtos.PaymentOutput;
 import jakarta.persistence.*;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -18,19 +19,16 @@ public class Payment implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
+    private final LocalDateTime createdAt = LocalDateTime.now();
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
     private Double amount;
     private String referenceMonth;
     private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.REMOVE )
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 

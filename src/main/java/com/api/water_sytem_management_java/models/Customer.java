@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Customer implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -22,8 +23,6 @@ public class Customer implements Serializable {
     private CustomerStatus status;
     private byte valve;
     private byte monthsInDebt; // Total number of months in debt
-    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
-
 
 
     public Customer(String name, String contact, String address, CustomerStatus status, byte valve, byte monthsInDebt) {
@@ -67,13 +66,16 @@ public class Customer implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public CustomerStatus getStatus() {
         return status;
     }
 
-
-    public void setName(String name) {
-        this.name = name;
+    public void setStatus(CustomerStatus status) {
+        this.status = status;
     }
 
     public String getContact() {
@@ -90,10 +92,6 @@ public class Customer implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void setStatus(CustomerStatus status) {
-        this.status = status;
     }
 
     public byte getValve() {

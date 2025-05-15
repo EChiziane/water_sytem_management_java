@@ -1,5 +1,3 @@
-
-
 package com.api.water_sytem_management_java.models.user;
 
 
@@ -13,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
+    private final LocalDateTime createdAt = LocalDateTime.now();
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -34,10 +32,6 @@ public class User implements UserDetails {
     private String email;
     private String phone;
     private String name;
-    private final LocalDateTime createdAt = LocalDateTime.now();
-
-
-
 
 
     public User(String login, String password, UserRole role, String email, String phone, String name) {
@@ -49,16 +43,15 @@ public class User implements UserDetails {
         this.name = name;
     }
 
-    public UserOutPut UserOutPut(){
-        return  new UserOutPut(name,email,phone,login,role,createdAt);
+    public UserOutPut UserOutPut() {
+        return new UserOutPut(name, email, phone, login, role, createdAt);
     }
-
-
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.role == UserRole.ADMIN)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
