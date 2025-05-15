@@ -1,15 +1,14 @@
 package com.api.water_sytem_management_java.controllers;
 
-import com.api.water_sytem_management_java.models.CarLoad;
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadInput;
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
+import com.api.water_sytem_management_java.models.CarLoad;
 import com.api.water_sytem_management_java.services.CarLoadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -29,7 +28,6 @@ public class CarLoadController {
         CarLoad savedCarLoad = carLoadService.createCarLoad(carLoad);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCarLoad);
     }
-
 
 
     @GetMapping

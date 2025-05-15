@@ -7,9 +7,14 @@ public record DriverInput(
         String contact,
         String carDescription,
         DriverStatus status
-      ) {
+) {
 
     public Driver toDriver() {
-        return new Driver();
+        return new Driver(
+                name,
+                contact,
+                carDescription,
+                status
+        );
     }
 }

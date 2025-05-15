@@ -28,7 +28,6 @@ public class PaymentController {
     private final PaymentRepository paymentRepository;
 
 
-
     public PaymentController(PaymentService paymentService,
                              CustomerRepository customerRepository,
                              ReceiptService receiptService,
@@ -51,7 +50,6 @@ public class PaymentController {
         Payment updatedPayment = paymentService.updatePayment(id, paymentInput, customer);
         return ResponseEntity.ok(updatedPayment);
     }
-
 
 
     @PostMapping

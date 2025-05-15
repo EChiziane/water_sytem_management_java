@@ -2,6 +2,7 @@ package com.api.water_sytem_management_java.models;
 
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -9,13 +10,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
-
+@Getter
 @Entity
 @Table(name = "tb_carloads")
 public class CarLoad implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -29,7 +30,6 @@ public class CarLoad implements Serializable {
     private BigDecimal totalSpent;         // Money spent on the delivery
     private BigDecimal totalEarnings;      // Revenue from the delivery
     private String deliveryStatus;         // Current status: e.g., "pending", "completed"
-    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
 
     public CarLoad() {
     }
@@ -56,8 +56,8 @@ public class CarLoad implements Serializable {
         this.deliveryStatus = deliveryStatus;
     }
 
-    public CarLoadOutPut toCarLoadOutPut(){
-        return  new CarLoadOutPut(
+    public CarLoadOutPut toCarLoadOutPut() {
+        return new CarLoadOutPut(
                 deliveryDestination,
                 customerName,
                 logisticsManagerName,
@@ -68,96 +68,7 @@ public class CarLoad implements Serializable {
                 totalSpent,
                 totalEarnings,
                 deliveryStatus
-                );
+        );
     }
 
-
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getDeliveryDestination() {
-        return deliveryDestination;
-    }
-
-    public void setDeliveryDestination(String deliveryDestination) {
-        this.deliveryDestination = deliveryDestination;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getLogisticsManagerName() {
-        return logisticsManagerName;
-    }
-
-    public void setLogisticsManagerName(String logisticsManagerName) {
-        this.logisticsManagerName = logisticsManagerName;
-    }
-
-    public String getAssignedDriverName() {
-        return assignedDriverName;
-    }
-
-    public void setAssignedDriverName(String assignedDriverName) {
-        this.assignedDriverName = assignedDriverName;
-    }
-
-    public String getTransportedMaterial() {
-        return transportedMaterial;
-    }
-
-    public void setTransportedMaterial(String transportedMaterial) {
-        this.transportedMaterial = transportedMaterial;
-    }
-
-    public String getCarloadBatchName() {
-        return carloadBatchName;
-    }
-
-    public void setCarloadBatchName(String carloadBatchName) {
-        this.carloadBatchName = carloadBatchName;
-    }
-
-    public String getCustomerPhoneNumber() {
-        return customerPhoneNumber;
-    }
-
-    public void setCustomerPhoneNumber(String customerPhoneNumber) {
-        this.customerPhoneNumber = customerPhoneNumber;
-    }
-
-    public BigDecimal getTotalSpent() {
-        return totalSpent;
-    }
-
-    public void setTotalSpent(BigDecimal totalSpent) {
-        this.totalSpent = totalSpent;
-    }
-
-    public BigDecimal getTotalEarnings() {
-        return totalEarnings;
-    }
-
-    public void setTotalEarnings(BigDecimal totalEarnings) {
-        this.totalEarnings = totalEarnings;
-    }
-
-    public String getDeliveryStatus() {
-        return deliveryStatus;
-    }
-
-    public void setDeliveryStatus(String deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
-    }
 }

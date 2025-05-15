@@ -3,7 +3,6 @@ package com.api.water_sytem_management_java.services;
 import com.api.water_sytem_management_java.CustomerNotFoundException;
 import com.api.water_sytem_management_java.controllers.dtos.CustomerInput;
 import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
-
 import com.api.water_sytem_management_java.models.Customer;
 import com.api.water_sytem_management_java.models.CustomerStatus;
 import com.api.water_sytem_management_java.repositories.CustomerRepository;
@@ -33,8 +32,7 @@ public class CustomerService {
     }
 
     public List<CustomerOutput> getAllCustomers() {
-        return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
-                .stream()
+        return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(this::mapToCustomerOutput)
                 .collect(Collectors.toList());
     }

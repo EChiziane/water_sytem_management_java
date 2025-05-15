@@ -1,9 +1,9 @@
 package com.api.water_sytem_management_java.controllers;
 
 
-import com.api.water_sytem_management_java.models.product.Product;
 import com.api.water_sytem_management_java.controllers.dtos.ProductRequestDTO;
 import com.api.water_sytem_management_java.controllers.dtos.ProductResponseDTO;
+import com.api.water_sytem_management_java.models.product.Product;
 import com.api.water_sytem_management_java.repositories.ProductRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class ProductController {
     ProductRepository repository;
 
     @PostMapping
-    public ResponseEntity postProduct(@RequestBody @Valid ProductRequestDTO body){
+    public ResponseEntity postProduct(@RequestBody @Valid ProductRequestDTO body) {
         Product newProduct = new Product(body);
 
         this.repository.save(newProduct);
@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity getAllProducts(){
+    public ResponseEntity getAllProducts() {
         List<ProductResponseDTO> productList = this.repository.findAll().stream().map(ProductResponseDTO::new).toList();
 
         return ResponseEntity.ok(productList);

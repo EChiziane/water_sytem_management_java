@@ -2,7 +2,7 @@ package com.api.water_sytem_management_java.controllers.dtos;
 
 import java.math.BigDecimal;
 
-public record CarLoadOutPut (
+public record CarLoadOutPut(
         String deliveryDestination,    // Final delivery location
         String customerName,           // Name of the customer receiving materials
         String logisticsManagerName,   // Person managing the shipment
@@ -13,9 +13,7 @@ public record CarLoadOutPut (
         BigDecimal totalSpent,         // Money spent on the delivery
         BigDecimal totalEarnings,      // Revenue from the delivery
         String deliveryStatus          // Current status: e.g., "pending", "completed"
-){
-
-
+) {
 
 
 }
