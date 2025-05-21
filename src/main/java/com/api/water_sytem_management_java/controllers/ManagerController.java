@@ -1,6 +1,8 @@
-package com.api.water_sytem_management_java.controllers.dtos;
+package com.api.water_sytem_management_java.controllers;
 
 
+import com.api.water_sytem_management_java.controllers.dtos.ManagerInPut;
+import com.api.water_sytem_management_java.controllers.dtos.ManagerOutPut;
 import com.api.water_sytem_management_java.models.Manager;
 import com.api.water_sytem_management_java.services.ManagerService;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/Managers")
+@RequestMapping("/managers")
 public class ManagerController {
 
     public  final ManagerService managerService;

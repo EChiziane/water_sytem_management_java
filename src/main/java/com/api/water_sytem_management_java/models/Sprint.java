@@ -1,41 +1,35 @@
 package com.api.water_sytem_management_java.models;
 
-import com.api.water_sytem_management_java.services.SprintOutPut;
+import com.api.water_sytem_management_java.controllers.dtos.SprintOutput;
 import jakarta.persistence.*;
-import lombok.Getter;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.UUID;
 
-@Getter
 @Entity
 @Table(name = "tb_sprints")
-
-public class Sprint {
+public class Sprint implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-    private final LocalDateTime createdAt = LocalDateTime.now(); // Use LocalDateTime.now() directly
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String Name;
-    private String Description;
-    private String Status;
+    private String code;
+    private String descricao;
 
+    public Sprint() {}
 
-    public Sprint(String name, String description) {
-        this.Name = name;
-        this.Description = description;
-        this.Status="CREATED";
+    public Sprint(String code, String descricao) {
+        this.code = code;
+        this.descricao = descricao;
     }
 
-    public Sprint() {
-
+    public SprintOutput toSprintOutput() {
+        return new SprintOutput(code, descricao);
     }
 
-    public SprintOutPut toSprintOutPut() {
-        return new SprintOutPut(Name, Description, Status);
-    }
+    // Getters and setters (opcional)
 }
