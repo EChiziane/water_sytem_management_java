@@ -4,7 +4,7 @@ import com.api.water_sytem_management_java.models.Driver;
 
 public record DriverInput(
         String name,
-        String contact,
+        String phone,
         String carDescription,
         DriverStatus status
 ) {
@@ -12,7 +12,7 @@ public record DriverInput(
     public Driver toDriver() {
         return new Driver(
                 name,
-                contact,
+                phone,
                 carDescription,
                 status
         );

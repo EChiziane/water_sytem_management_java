@@ -3,12 +3,14 @@ package com.api.water_sytem_management_java.models;
 import com.api.water_sytem_management_java.controllers.dtos.DriverStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "tb_drivers")
 public class Driver {
@@ -21,7 +23,7 @@ public class Driver {
     private String Name;
     private String Phone;
     private String CarDescription;
-    private String status;
+    private    DriverStatus status;
 
     public Driver(String name,
                   String contact,
@@ -30,7 +32,7 @@ public class Driver {
         this.Name = name;
         this.Phone = contact;
         this.CarDescription = carDescription;
-        this.status = status.toString();
+        this.status = status;
     }
 
     public Driver() {
@@ -38,11 +40,12 @@ public class Driver {
     }
 
     public DriverOutPut toDriverOutPut(Driver driver) {
-        return new DriverOutPut(
+        return new DriverOutPut(id,
                 Name,
                 Phone,
                 CarDescription,
-                status
+                status,
+                createdAt
         );
     }
 }

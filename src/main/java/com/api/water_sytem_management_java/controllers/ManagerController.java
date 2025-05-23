@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -34,4 +36,18 @@ public class ManagerController {
        Manager savedManager= managerService.createManager(manager);
        return ResponseEntity.status(HttpStatus.CREATED).body(savedManager);
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ManagerOutPut> updateManager(@PathVariable UUID id, @RequestBody ManagerInPut managerInput) {
+        Optional<ManagerOutPut> updatedManager = managerService.updateManager(id, managerInput);
+        return updatedManager.map(manager->ResponseEntity.ok().body(manager)).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Manager> deleteManager(@PathVariable UUID id) {
+        managerService.deleteManager(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
