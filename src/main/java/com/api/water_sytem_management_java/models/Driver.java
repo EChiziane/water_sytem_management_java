@@ -1,5 +1,6 @@
 package com.api.water_sytem_management_java.models;
 
+import com.api.water_sytem_management_java.controllers.dtos.DriverOutPut;
 import com.api.water_sytem_management_java.controllers.dtos.DriverStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class Driver {
     private String Name;
     private String Phone;
     private String CarDescription;
-    private    DriverStatus status;
+    private DriverStatus status;
 
     public Driver(String name,
                   String contact,

@@ -6,9 +6,9 @@ public record ManagerInPut(String name,
                            String contact,
                            String address,
                            ManagerStatus status
-                           ) {
+) {
     public Manager toManager() {
-        return  new Manager(
+        return new Manager(
                 name,
                 contact,
                 address,

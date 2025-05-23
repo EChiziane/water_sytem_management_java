@@ -1,7 +1,5 @@
 package com.api.water_sytem_management_java.controllers.dtos;
 
-import com.api.water_sytem_management_java.models.CustomerStatus;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 

@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 
-
 @Getter
 @Setter
 @Entity
@@ -41,7 +40,7 @@ public class Manager {
     }
 
     public ManagerOutPut toManagerOutPut() {
-        return  new ManagerOutPut(
+        return new ManagerOutPut(
                 id,
                 name,
                 contact,

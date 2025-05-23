@@ -1,6 +1,5 @@
 package com.api.water_sytem_management_java.models;
 
-import com.api.water_sytem_management_java.controllers.dtos.DriverStatus;
 import com.api.water_sytem_management_java.controllers.dtos.SprintOutput;
 import com.api.water_sytem_management_java.controllers.dtos.SprintStatus;
 import jakarta.persistence.*;
@@ -29,17 +28,19 @@ public class Sprint implements Serializable {
     private String code;
     private String description;
     private SprintStatus status;
-    public Sprint() {}
 
-    public Sprint(String name,String code, String description, SprintStatus status) {
+    public Sprint() {
+    }
+
+    public Sprint(String name, String code, String description, SprintStatus status) {
         this.code = code;
         this.name = name;
         this.description = description;
-        this.status=status;
+        this.status = status;
     }
 
     public SprintOutput toSprintOutput() {
-        return new SprintOutput(id,name,code, description,status,createdAt);
+        return new SprintOutput(id, name, code, description, status, createdAt);
     }
 
     // Getters and setters (opcional)

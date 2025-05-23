@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/managers")
 public class ManagerController {
 
-    public  final ManagerService managerService;
+    public final ManagerService managerService;
 
     public ManagerController(ManagerService managerService) {
         this.managerService = managerService;
@@ -26,22 +26,22 @@ public class ManagerController {
 
     @GetMapping
     public ResponseEntity<List<ManagerOutPut>> getAllManagers() {
-        List<ManagerOutPut> managers= managerService.getAllManagers();
+        List<ManagerOutPut> managers = managerService.getAllManagers();
         return ResponseEntity.ok(managers);
     }
 
     @PostMapping
     public ResponseEntity<Manager> createManager(@RequestBody ManagerInPut managerInput) {
-       Manager manager = managerInput.toManager();
-       Manager savedManager= managerService.createManager(manager);
-       return ResponseEntity.status(HttpStatus.CREATED).body(savedManager);
+        Manager manager = managerInput.toManager();
+        Manager savedManager = managerService.createManager(manager);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedManager);
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<ManagerOutPut> updateManager(@PathVariable UUID id, @RequestBody ManagerInPut managerInput) {
         Optional<ManagerOutPut> updatedManager = managerService.updateManager(id, managerInput);
-        return updatedManager.map(manager->ResponseEntity.ok().body(manager)).orElse(ResponseEntity.notFound().build());
+        return updatedManager.map(manager -> ResponseEntity.ok().body(manager)).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

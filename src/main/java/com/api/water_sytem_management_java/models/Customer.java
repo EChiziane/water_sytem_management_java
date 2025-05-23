@@ -1,6 +1,7 @@
 package com.api.water_sytem_management_java.models;
 
 import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
+import com.api.water_sytem_management_java.controllers.dtos.CustomerStatus;
 import jakarta.persistence.*;
 
 import java.io.Serial;

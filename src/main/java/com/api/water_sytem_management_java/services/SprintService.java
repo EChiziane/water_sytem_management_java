@@ -3,7 +3,6 @@ package com.api.water_sytem_management_java.services;
 import com.api.water_sytem_management_java.controllers.dtos.SprintInput;
 import com.api.water_sytem_management_java.controllers.dtos.SprintOutput;
 import com.api.water_sytem_management_java.models.Sprint;
-
 import com.api.water_sytem_management_java.repositories.SprintRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
@@ -24,7 +23,7 @@ public class SprintService {
     }
 
     public List<SprintOutput> getAllSprints() {
-        return sprintRepository.findAll(Sort.by(Sort.Direction.DESC,"createdAt")).stream()
+        return sprintRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(Sprint::toSprintOutput)
                 .collect(Collectors.toList());
     }
@@ -36,7 +35,7 @@ public class SprintService {
     @Transactional
     public Optional<SprintOutput> sprintUpdate(@PathVariable UUID id, SprintInput input) {
         return sprintRepository.findById(id)
-                .map(existingSprint->{
+                .map(existingSprint -> {
                     existingSprint.setName(input.name());
                     existingSprint.setCode(input.code());
                     existingSprint.setStatus(input.status());

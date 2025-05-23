@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class ManagerService {
 
-private  final ManagerRepository managerRepository;
+    private final ManagerRepository managerRepository;
 
     public ManagerService(ManagerRepository managerRepository) {
         this.managerRepository = managerRepository;
@@ -25,7 +25,7 @@ private  final ManagerRepository managerRepository;
 
 
     public List<ManagerOutPut> getAllManagers() {
-        return  managerRepository.findAll(Sort.by(Sort.Direction.DESC,"createdAt"))
+        return managerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(this::mapToManagerOutPut)
                 .collect(Collectors.toList());
@@ -39,18 +39,20 @@ private  final ManagerRepository managerRepository;
         return managerRepository.save(manager);
     }
 
-    public void deleteManager(@PathVariable UUID id) {managerRepository.deleteById(id);}
+    public void deleteManager(@PathVariable UUID id) {
+        managerRepository.deleteById(id);
+    }
 
     @Transactional
     public Optional<ManagerOutPut> updateManager(@PathVariable UUID id, ManagerInPut managerInPut) {
         return managerRepository.findById(id)
-                .map(existingManager->{
-            existingManager.setName(managerInPut.name());
-            existingManager.setAddress(managerInPut.address());
-            existingManager.setContact(managerInPut.contact());
-            existingManager.setStatus(managerInPut.status());
-            Manager updatedManager = managerRepository.save(existingManager);
-            return mapToManagerOutPut(existingManager);
-        });
+                .map(existingManager -> {
+                    existingManager.setName(managerInPut.name());
+                    existingManager.setAddress(managerInPut.address());
+                    existingManager.setContact(managerInPut.contact());
+                    existingManager.setStatus(managerInPut.status());
+                    Manager updatedManager = managerRepository.save(existingManager);
+                    return mapToManagerOutPut(existingManager);
+                });
     }
 }

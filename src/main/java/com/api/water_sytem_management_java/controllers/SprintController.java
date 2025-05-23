@@ -1,7 +1,7 @@
 package com.api.water_sytem_management_java.controllers;
+
 import com.api.water_sytem_management_java.controllers.dtos.SprintInput;
 import com.api.water_sytem_management_java.controllers.dtos.SprintOutput;
-import com.api.water_sytem_management_java.models.Driver;
 import com.api.water_sytem_management_java.models.Sprint;
 import com.api.water_sytem_management_java.services.SprintService;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class SprintController {
     @PutMapping("/{id}")
     public ResponseEntity<SprintOutput> updateSprint(@PathVariable UUID id, @RequestBody SprintInput sprintInput) {
         Optional<SprintOutput> updatedSprint = sprintService.sprintUpdate(id, sprintInput);
-        return updatedSprint.map(sprint->ResponseEntity.ok().body(sprint)).orElse(ResponseEntity.notFound().build());
+        return updatedSprint.map(sprint -> ResponseEntity.ok().body(sprint)).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

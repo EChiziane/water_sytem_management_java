@@ -2,7 +2,7 @@ package com.api.water_sytem_management_java.services;
 
 import com.api.water_sytem_management_java.controllers.dtos.DriverInput;
 import com.api.water_sytem_management_java.models.Driver;
-import com.api.water_sytem_management_java.models.DriverOutPut;
+import com.api.water_sytem_management_java.controllers.dtos.DriverOutPut;
 import com.api.water_sytem_management_java.repositories.DriverRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
@@ -39,7 +39,7 @@ public class DriverService {
         return driver.toDriverOutPut(driver);
     }
 
-    public  void  deleteDriver(UUID driverId) {
+    public void deleteDriver(UUID driverId) {
         driverRepository.deleteById(driverId);
     }
 
@@ -47,7 +47,7 @@ public class DriverService {
     @Transactional
     public Optional<DriverOutPut> driverUpdate(@PathVariable UUID id, DriverInput input) {
         return driverRepository.findById(id)
-                .map(existingDriver->{
+                .map(existingDriver -> {
                     existingDriver.setName(input.name());
                     existingDriver.setCarDescription(input.carDescription());
                     existingDriver.setStatus(input.status());

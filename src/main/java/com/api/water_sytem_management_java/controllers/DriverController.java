@@ -3,9 +3,8 @@ package com.api.water_sytem_management_java.controllers;
 
 import com.api.water_sytem_management_java.controllers.dtos.DriverInput;
 import com.api.water_sytem_management_java.models.Driver;
-import com.api.water_sytem_management_java.models.DriverOutPut;
+import com.api.water_sytem_management_java.controllers.dtos.DriverOutPut;
 import com.api.water_sytem_management_java.services.DriverService;
-import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,7 @@ public class DriverController {
     @PutMapping("/{id}")
     public ResponseEntity<DriverOutPut> updateDriver(@PathVariable UUID id, @RequestBody DriverInput driverInput) {
         Optional<DriverOutPut> updatedDriver = driverService.driverUpdate(id, driverInput);
-        return updatedDriver.map(driver->ResponseEntity.ok().body(driver)).orElse(ResponseEntity.notFound().build());
+        return updatedDriver.map(driver -> ResponseEntity.ok().body(driver)).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
@@ -43,6 +42,7 @@ public class DriverController {
         List<DriverOutPut> drivers = driverService.getAllDrivers();
         return ResponseEntity.status(HttpStatus.OK).body(drivers);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Driver> deleteDriver(@PathVariable UUID id) {
         driverService.deleteDriver(id);
