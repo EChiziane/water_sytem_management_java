@@ -6,6 +6,7 @@ import com.api.water_sytem_management_java.models.Sprint;
 
 import com.api.water_sytem_management_java.repositories.SprintRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,7 +24,7 @@ public class SprintService {
     }
 
     public List<SprintOutput> getAllSprints() {
-        return sprintRepository.findAll().stream()
+        return sprintRepository.findAll(Sort.by(Sort.Direction.DESC,"createdAt")).stream()
                 .map(Sprint::toSprintOutput)
                 .collect(Collectors.toList());
     }
