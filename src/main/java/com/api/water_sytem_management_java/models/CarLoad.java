@@ -22,8 +22,18 @@ public class CarLoad implements Serializable {
     private UUID id;
     private String deliveryDestination;    // Final delivery location
     private String customerName;           // Name of the customer receiving materials
-    private String logisticsManagerName;   // Person managing the shipment
-    private String assignedDriverName;     // Driver responsible for the delivery
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "manager_id")
+    private Manager logisticsManagerName;
+
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "driver_id")
+    private Driver assignedDriver;
+
+
+    // Driver responsible for the delivery
     private String transportedMaterial;    // Name/type of material being delivered
     private String carloadBatchName;     // Name of the delivery sprint or batch
     private String customerPhoneNumber;    // Contact phone number of the customer
@@ -36,8 +46,8 @@ public class CarLoad implements Serializable {
 
     public CarLoad(String deliveryDestination,
                    String customerName,
-                   String logisticsManagerName,
-                   String assignedDriverName,
+                  Manager logisticsManagerName,
+                   Driver assignedDriver,
                    String transportedMaterial,
                    String carloadBatchName,
                    String customerPhoneNumber,
@@ -47,7 +57,7 @@ public class CarLoad implements Serializable {
         this.deliveryDestination = deliveryDestination;
         this.customerName = customerName;
         this.logisticsManagerName = logisticsManagerName;
-        this.assignedDriverName = assignedDriverName;
+        this.assignedDriver = assignedDriver;
         this.transportedMaterial = transportedMaterial;
         this.carloadBatchName = carloadBatchName;
         this.customerPhoneNumber = customerPhoneNumber;
@@ -60,8 +70,8 @@ public class CarLoad implements Serializable {
         return new CarLoadOutPut(
                 deliveryDestination,
                 customerName,
-                logisticsManagerName,
-                assignedDriverName,
+                logisticsManagerName.getName(),
+                assignedDriver.getName(),
                 transportedMaterial,
                 carloadBatchName,
                 customerPhoneNumber,

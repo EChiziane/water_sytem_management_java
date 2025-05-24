@@ -1,14 +1,17 @@
 package com.api.water_sytem_management_java.controllers.dtos;
 
 import com.api.water_sytem_management_java.models.CarLoad;
+import com.api.water_sytem_management_java.models.Driver;
+import com.api.water_sytem_management_java.models.Manager;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record CarLoadInput(
         String deliveryDestination,    // Final delivery location
         String customerName,           // Name of the customer receiving materials
-        String logisticsManagerName,   // Person managing the shipment
-        String assignedDriverName,     // Driver responsible for the delivery
+        UUID logisticsManagerId,   // Person managing the shipment
+       UUID assignedDriverId,     // Driver responsible for the delivery
         String transportedMaterial,    // Name/type of material being delivered
         String carloadBatchName,       // Name of the delivery sprint or batch
         String customerPhoneNumber,    // Contact phone number of the customer
@@ -16,12 +19,12 @@ public record CarLoadInput(
         BigDecimal totalEarnings,      // Revenue from the delivery
         String deliveryStatus          // Current status: e.g., "pending", "completed"
 ) {
-    public CarLoad toCarLoad() {
+    public CarLoad toCarLoad(Manager manager, Driver assignedDriver) {
         return new CarLoad(
                 deliveryDestination,
                 customerName,
-                logisticsManagerName,
-                assignedDriverName,
+                manager,
+                assignedDriver,
                 transportedMaterial,
                 carloadBatchName,
                 customerPhoneNumber,

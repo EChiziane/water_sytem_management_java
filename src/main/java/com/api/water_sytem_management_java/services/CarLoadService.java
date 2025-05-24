@@ -3,7 +3,9 @@ package com.api.water_sytem_management_java.services;
 
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
 import com.api.water_sytem_management_java.models.CarLoad;
+import com.api.water_sytem_management_java.models.Manager;
 import com.api.water_sytem_management_java.repositories.CarLoadRepository;
+import com.api.water_sytem_management_java.repositories.ManagerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -17,10 +19,12 @@ import java.util.stream.Collectors;
 public class CarLoadService {
 
     private final CarLoadRepository carLoadRepository;
+    private final ManagerRepository managerRepository;
 
     @Autowired
-    public CarLoadService(CarLoadRepository carLoadRepository) {
+    public CarLoadService(CarLoadRepository carLoadRepository, ManagerRepository managerRepository) {
         this.carLoadRepository = carLoadRepository;
+        this.managerRepository = managerRepository;
     }
 
     @Transactional
@@ -50,4 +54,6 @@ public class CarLoadService {
 
         return carLoad.toCarLoadOutPut();
     }
+
+
 }
