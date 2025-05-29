@@ -32,6 +32,10 @@ public class CarLoad implements Serializable {
     @JoinColumn(name = "driver_id")
     private Driver assignedDriver;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "sprint_id")
+    private Sprint  carloadBatchSprint;
+
 
     // Driver responsible for the delivery
     private String transportedMaterial;    // Name/type of material being delivered
@@ -49,7 +53,7 @@ public class CarLoad implements Serializable {
                   Manager logisticsManagerName,
                    Driver assignedDriver,
                    String transportedMaterial,
-                   String carloadBatchName,
+                   Sprint carloadBatchName,
                    String customerPhoneNumber,
                    BigDecimal totalSpent,
                    BigDecimal totalEarnings,
@@ -59,7 +63,7 @@ public class CarLoad implements Serializable {
         this.logisticsManagerName = logisticsManagerName;
         this.assignedDriver = assignedDriver;
         this.transportedMaterial = transportedMaterial;
-        this.carloadBatchName = carloadBatchName;
+        this. carloadBatchSprint = carloadBatchName;
         this.customerPhoneNumber = customerPhoneNumber;
         this.totalSpent = totalSpent;
         this.totalEarnings = totalEarnings;
@@ -73,7 +77,7 @@ public class CarLoad implements Serializable {
                 logisticsManagerName.getName(),
                 assignedDriver.getName(),
                 transportedMaterial,
-                carloadBatchName,
+                carloadBatchSprint.getName(),
                 customerPhoneNumber,
                 totalSpent,
                 totalEarnings,

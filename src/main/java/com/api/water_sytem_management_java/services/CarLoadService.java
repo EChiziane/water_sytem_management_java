@@ -39,6 +39,13 @@ public class CarLoadService {
                 .collect(Collectors.toList());
     }
 
+    public List<CarLoadOutPut> getCarloadbySprint(UUID id) {
+        return carLoadRepository.findByCarloadBatchSprintId(id)
+                .stream()
+                .map(this::mapToCarLoadOutput)
+                .collect(Collectors.toList());
+    }
+
     public CarLoadOutPut getCarLoadById(UUID id) {
         return carLoadRepository.findById(id)
                 .map(this::mapToCarLoadOutput)
