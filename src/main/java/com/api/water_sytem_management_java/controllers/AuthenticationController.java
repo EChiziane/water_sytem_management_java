@@ -3,7 +3,7 @@ package com.api.water_sytem_management_java.controllers;
 
 import com.api.water_sytem_management_java.controllers.dtos.AuthenticationDTO;
 import com.api.water_sytem_management_java.controllers.dtos.LoginResponseDTO;
-import com.api.water_sytem_management_java.controllers.dtos.RegisterDTO;
+import com.api.water_sytem_management_java.controllers.dtos.UserInput;
 import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
 import com.api.water_sytem_management_java.models.user.User;
 import com.api.water_sytem_management_java.repositories.UserRepository;
@@ -11,12 +11,15 @@ import com.api.water_sytem_management_java.services.AuthorizationService;
 import com.api.water_sytem_management_java.services.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -43,8 +46,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-        if (this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
+    public ResponseEntity register(@RequestBody @Valid UserInput data) {
+/*        if (this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();*/
         User newUser = data.toUser();
         this.repository.save(newUser);
         return ResponseEntity.ok().body(newUser);
@@ -54,6 +57,18 @@ public class AuthenticationController {
     public ResponseEntity<List<UserOutPut>> getAllUsers() {
         List<UserOutPut> users = authorizationService.getUsers();
         return ResponseEntity.ok().body(users);
+    }
+
+    @DeleteMapping("/{id}")
+    public  ResponseEntity<UserOutPut> deleteUser(@PathVariable UUID id){
+        authorizationService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserOutPut> updateUser(@PathVariable UUID id , @RequestBody UserInput userInput){
+        Optional<UserOutPut> updatedUser= authorizationService.userUpdate(id, userInput);
+        return updatedUser.map(user->ResponseEntity.ok().body(user)).orElse(ResponseEntity.notFound().build());
     }
 
 
