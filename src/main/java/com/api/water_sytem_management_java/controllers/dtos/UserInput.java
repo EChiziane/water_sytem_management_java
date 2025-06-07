@@ -10,7 +10,7 @@ public record UserInput(String name, String email, String phone, String password
 
     public User toUser() {
         String encryptedPassword = new BCryptPasswordEncoder().encode(password);
-        return new User( encryptedPassword, role, email, phone, name, status);
+        return new User(encryptedPassword, role, email, phone, name, status);
     }
 
 

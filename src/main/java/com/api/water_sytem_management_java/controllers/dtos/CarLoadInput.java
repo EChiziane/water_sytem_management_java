@@ -12,7 +12,7 @@ public record CarLoadInput(
         String deliveryDestination,    // Final delivery location
         String customerName,           // Name of the customer receiving materials
         UUID logisticsManagerId,   // Person managing the shipment
-       UUID assignedDriverId,     // Driver responsible for the delivery
+        UUID assignedDriverId,     // Driver responsible for the delivery
         String transportedMaterial,    // Name/type of material being delivered
         UUID carloadBatchId,       // Name of the delivery sprint or batch
         String customerPhoneNumber,    // Contact phone number of the customer

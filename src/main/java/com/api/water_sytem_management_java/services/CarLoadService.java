@@ -3,7 +3,6 @@ package com.api.water_sytem_management_java.services;
 
 import com.api.water_sytem_management_java.controllers.dtos.CarLoadOutPut;
 import com.api.water_sytem_management_java.models.CarLoad;
-import com.api.water_sytem_management_java.models.Manager;
 import com.api.water_sytem_management_java.repositories.CarLoadRepository;
 import com.api.water_sytem_management_java.repositories.ManagerRepository;
 import jakarta.transaction.Transactional;
