@@ -31,10 +31,25 @@ public class User implements UserDetails {
     private String email;
     private String phone;
     private String name;
-private UserStatus status;
+    private UserStatus status;
 
 
-    public  String formatUsername(String username) {
+    public User(String password, UserRole role, String email, String phone, String name, UserStatus status) {
+        this.login = formatUsername(name);
+        this.password = password;
+        this.role = role;
+        this.email = email;
+        this.phone = phone;
+        this.name = name;
+        if (status != null) {
+            this.status = status;
+        } else {
+            this.status = UserStatus.CREATED;
+        }
+
+    }
+
+    public String formatUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("O nome do usuário não pode ser nulo ou vazio.");
         }
@@ -42,28 +57,11 @@ private UserStatus status;
         // Remove espaços extras e pega apenas o primeiro nome
         String firstName = username.trim().split(" ")[0].toLowerCase();
 
-        return "tc_" + firstName;}
-
-
-
-
-    public User( String password, UserRole role, String email, String phone, String name, UserStatus status) {
-        this.login = formatUsername(name);
-        this.password = password;
-        this.role = role;
-        this.email = email;
-        this.phone = phone;
-        this.name = name;
-        if(status!=null){
-            this.status=status;
-        }else {
-            this.status=UserStatus.CREATED;
-        }
-
+        return "tc_" + firstName;
     }
 
     public UserOutPut UserOutPut() {
-        return new UserOutPut(id,name, email, phone, login, role,status, createdAt);
+        return new UserOutPut(id, name, email, phone, login, role, status, createdAt);
     }
 
 

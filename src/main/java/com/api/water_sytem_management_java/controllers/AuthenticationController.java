@@ -47,10 +47,16 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid UserInput data) {
-/*        if (this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();*/
+        /*        if (this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();*/
         User newUser = data.toUser();
-        this.repository.save(newUser);
+        User savedUser = authorizationService.createUser(newUser);
         return ResponseEntity.ok().body(newUser);
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity adminUser() {
+        User user = authorizationService.seedDefaultAdminUser();
+        return ResponseEntity.ok().body(user);
     }
 
     @GetMapping("/users")
@@ -60,15 +66,15 @@ public class AuthenticationController {
     }
 
     @DeleteMapping("/{id}")
-    public  ResponseEntity<UserOutPut> deleteUser(@PathVariable UUID id){
+    public ResponseEntity<UserOutPut> deleteUser(@PathVariable UUID id) {
         authorizationService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserOutPut> updateUser(@PathVariable UUID id , @RequestBody UserInput userInput){
-        Optional<UserOutPut> updatedUser= authorizationService.userUpdate(id, userInput);
-        return updatedUser.map(user->ResponseEntity.ok().body(user)).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UserOutPut> updateUser(@PathVariable UUID id, @RequestBody UserInput userInput) {
+        Optional<UserOutPut> updatedUser = authorizationService.userUpdate(id, userInput);
+        return updatedUser.map(user -> ResponseEntity.ok().body(user)).orElse(ResponseEntity.notFound().build());
     }
 
 
