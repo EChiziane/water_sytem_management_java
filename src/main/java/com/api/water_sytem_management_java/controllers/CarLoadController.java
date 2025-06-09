@@ -25,7 +25,7 @@ public class CarLoadController {
 
     private final CarLoadService carLoadService;
     private final ManagerRepository managerRepository;
-    private  final DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
     private final SprintRepository sprintRepository;
 
 
@@ -39,16 +39,16 @@ public class CarLoadController {
 
     @PostMapping
     public ResponseEntity<CarLoad> createCarLoad(@RequestBody CarLoadInput carLoadInput) {
-        Manager manager= managerRepository.findById(carLoadInput.logisticsManagerId())
+        Manager manager = managerRepository.findById(carLoadInput.logisticsManagerId())
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
 
-        Driver driver= driverRepository.findById(carLoadInput.assignedDriverId())
+        Driver driver = driverRepository.findById(carLoadInput.assignedDriverId())
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
 
-        Sprint sprint= sprintRepository.findById(carLoadInput.carloadBatchId())
+        Sprint sprint = sprintRepository.findById(carLoadInput.carloadBatchId())
                 .orElseThrow(() -> new RuntimeException("Sprint not found"));
 
-        CarLoad carLoad = carLoadInput.toCarLoad(manager,driver,sprint); // Você deve ter este método no DTO
+        CarLoad carLoad = carLoadInput.toCarLoad(manager, driver, sprint); // Você deve ter este método no DTO
         CarLoad savedCarLoad = carLoadService.createCarLoad(carLoad);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCarLoad);
     }
@@ -67,7 +67,7 @@ public class CarLoadController {
     }
 
     @GetMapping("/sprint/{id}")
-    public ResponseEntity<List<CarLoadOutPut> >getCarLoadBySprintId(@PathVariable UUID id) {
+    public ResponseEntity<List<CarLoadOutPut>> getCarLoadBySprintId(@PathVariable UUID id) {
         List<CarLoadOutPut> carLoads = carLoadService.getCarloadbySprint(id);
         return ResponseEntity.ok(carLoads);
     }

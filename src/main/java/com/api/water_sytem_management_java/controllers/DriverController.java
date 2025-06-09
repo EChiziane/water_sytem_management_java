@@ -2,8 +2,8 @@ package com.api.water_sytem_management_java.controllers;
 
 
 import com.api.water_sytem_management_java.controllers.dtos.DriverInput;
-import com.api.water_sytem_management_java.models.Driver;
 import com.api.water_sytem_management_java.controllers.dtos.DriverOutPut;
+import com.api.water_sytem_management_java.models.Driver;
 import com.api.water_sytem_management_java.services.DriverService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

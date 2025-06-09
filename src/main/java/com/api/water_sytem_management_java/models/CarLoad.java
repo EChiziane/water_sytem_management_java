@@ -34,7 +34,7 @@ public class CarLoad implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "sprint_id")
-    private Sprint  carloadBatchSprint;
+    private Sprint carloadBatchSprint;
 
 
     // Driver responsible for the delivery
@@ -50,7 +50,7 @@ public class CarLoad implements Serializable {
 
     public CarLoad(String deliveryDestination,
                    String customerName,
-                  Manager logisticsManagerName,
+                   Manager logisticsManagerName,
                    Driver assignedDriver,
                    String transportedMaterial,
                    Sprint carloadBatchName,
@@ -63,7 +63,7 @@ public class CarLoad implements Serializable {
         this.logisticsManagerName = logisticsManagerName;
         this.assignedDriver = assignedDriver;
         this.transportedMaterial = transportedMaterial;
-        this. carloadBatchSprint = carloadBatchName;
+        this.carloadBatchSprint = carloadBatchName;
         this.customerPhoneNumber = customerPhoneNumber;
         this.totalSpent = totalSpent;
         this.totalEarnings = totalEarnings;
