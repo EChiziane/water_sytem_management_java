@@ -1,4 +1,4 @@
-package com.api.water_sytem_management_java.services;
+package com.api.water_sytem_management_java.services.authServices;
 
 import com.api.water_sytem_management_java.models.user.User;
 import com.auth0.jwt.JWT;

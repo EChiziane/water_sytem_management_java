@@ -1,7 +1,7 @@
 package com.api.water_sytem_management_java.controllers.dtos;
 
 
-import com.api.water_sytem_management_java.models.UserStatus;
+import com.api.water_sytem_management_java.models.user.UserStatus;
 import com.api.water_sytem_management_java.models.user.User;
 import com.api.water_sytem_management_java.models.user.UserRole;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

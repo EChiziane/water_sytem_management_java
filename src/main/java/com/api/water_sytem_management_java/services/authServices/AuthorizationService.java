@@ -1,9 +1,9 @@
-package com.api.water_sytem_management_java.services;
+package com.api.water_sytem_management_java.services.authServices;
 
 
 import com.api.water_sytem_management_java.controllers.dtos.UserInput;
 import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
-import com.api.water_sytem_management_java.models.UserStatus;
+import com.api.water_sytem_management_java.models.user.UserStatus;
 import com.api.water_sytem_management_java.models.user.User;
 import com.api.water_sytem_management_java.models.user.UserRole;
 import com.api.water_sytem_management_java.repositories.UserRepository;
