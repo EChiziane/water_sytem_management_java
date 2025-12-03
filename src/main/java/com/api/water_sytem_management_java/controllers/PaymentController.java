@@ -67,7 +67,7 @@ public class PaymentController {
 
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
-        receiptService.generateInvoice(payment);
+   //     receiptService.generateInvoice(payment);
         return "ResponseEntity.status(HttpStatus.CREATED).body(paymentService.savePayment(payment))";
     }
 
