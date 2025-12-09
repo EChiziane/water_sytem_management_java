@@ -1,8 +1,8 @@
 package com.api.water_sytem_management_java.infra.security;
 
 
-import com.api.water_sytem_management_java.repositories.UserRepository;
-import com.api.water_sytem_management_java.services.TokenService;
+import com.api.water_sytem_management_java.repositories.auth.UserRepository;
+import com.api.water_sytem_management_java.services.auth.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,9 +1,9 @@
 package com.api.water_sytem_management_java.controllers;
 
-import com.api.water_sytem_management_java.controllers.dtos.CustomerInput;
-import com.api.water_sytem_management_java.controllers.dtos.CustomerOutput;
-import com.api.water_sytem_management_java.models.Customer;
-import com.api.water_sytem_management_java.services.CustomerService;
+import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerInput;
+import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerOutput;
+import com.api.water_sytem_management_java.models.customer.Customer;
+import com.api.water_sytem_management_java.services.customer.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,35 +25,35 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerInput customerInput) {
+    public ResponseEntity<Customer> createNewCustomer(@RequestBody CustomerInput customerInput) {
         Customer customer = customerInput.toCustomer();
-        Customer savedCustomer = customerService.createCustomer(customer);
+        Customer savedCustomer = customerService.createNewCustomer(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerOutput> updateCustomer(@PathVariable UUID id, @RequestBody CustomerInput customerInput) {
-        Optional<CustomerOutput> updatedCustomer = customerService.updateCustomer(id, customerInput);
+    public ResponseEntity<CustomerOutput> updateExistingCustomer(@PathVariable UUID id, @RequestBody CustomerInput customerInput) {
+        Optional<CustomerOutput> updatedCustomer = customerService.updateExistingCustomer(id, customerInput);
         return updatedCustomer
                 .map(customer -> ResponseEntity.ok().body(customer))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerOutput>> getAllCustomers() {
-        List<CustomerOutput> customers = customerService.getAllCustomers();
+    public ResponseEntity<List<CustomerOutput>> fetchAllCustomers() {
+        List<CustomerOutput> customers = customerService.fetchAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerOutput> getCustomerById(@PathVariable UUID id) {
-        CustomerOutput customer = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerOutput> fetchCustomerById(@PathVariable UUID id) {
+        CustomerOutput customer = customerService.fetchCustomerById(id);
         return ResponseEntity.ok(customer);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-        customerService.deleteCustomer(id);
+    public ResponseEntity<Void> removeCustomerById(@PathVariable UUID id) {
+        customerService.removeCustomerById(id);
         return ResponseEntity.noContent().build();
     }
 }

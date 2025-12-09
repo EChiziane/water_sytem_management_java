@@ -1,8 +1,7 @@
 package com.api.water_sytem_management_java.models.user;
 
 
-import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
-import com.api.water_sytem_management_java.models.UserStatus;
+import com.api.water_sytem_management_java.controllers.dtos.auth.UserOutPut;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

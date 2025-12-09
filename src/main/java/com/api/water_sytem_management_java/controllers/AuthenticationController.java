@@ -1,14 +1,14 @@
 package com.api.water_sytem_management_java.controllers;
 
 
-import com.api.water_sytem_management_java.controllers.dtos.AuthenticationDTO;
-import com.api.water_sytem_management_java.controllers.dtos.LoginResponseDTO;
-import com.api.water_sytem_management_java.controllers.dtos.UserInput;
-import com.api.water_sytem_management_java.controllers.dtos.UserOutPut;
+import com.api.water_sytem_management_java.controllers.dtos.auth.AuthenticationDTO;
+import com.api.water_sytem_management_java.controllers.dtos.auth.LoginResponseDTO;
+import com.api.water_sytem_management_java.controllers.dtos.auth.UserInput;
+import com.api.water_sytem_management_java.controllers.dtos.auth.UserOutPut;
 import com.api.water_sytem_management_java.models.user.User;
-import com.api.water_sytem_management_java.repositories.UserRepository;
-import com.api.water_sytem_management_java.services.AuthorizationService;
-import com.api.water_sytem_management_java.services.TokenService;
+import com.api.water_sytem_management_java.repositories.auth.UserRepository;
+import com.api.water_sytem_management_java.services.auth.AuthorizationService;
+import com.api.water_sytem_management_java.services.auth.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
