@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_customers6")
+@Table(name = "tb_wsm_customers")
 public class Customer implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

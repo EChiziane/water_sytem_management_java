@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Entity
-@Table(name = "tb_payment13")
+@Table(name = "tb_wsm_payments")
 public class Payment implements Serializable {
 
     @Serial
