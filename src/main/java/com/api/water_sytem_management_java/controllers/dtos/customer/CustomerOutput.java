@@ -1,5 +1,6 @@
 package com.api.water_sytem_management_java.controllers.dtos.customer;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -16,6 +17,7 @@ public record CustomerOutput(UUID id,
                              byte valve,
                              byte monthsInDebt,
                              String referenceMonth,
+                             int monthlyFee,
                              LocalDateTime createdAt) {
 
     public CustomerOutput(UUID id,
@@ -26,6 +28,7 @@ public record CustomerOutput(UUID id,
                           byte valve,
                           byte monthsInDebt,
                           String referenceMonth,
+                        int monthlyFee,
                           LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
@@ -34,6 +37,7 @@ public record CustomerOutput(UUID id,
         this.status = status;
         this.valve = valve;
         this.monthsInDebt = monthsInDebt;
+        this.monthlyFee=monthlyFee;
         this.createdAt = createdAt;
         this.referenceMonth = getReferenceMonth(monthsInDebt);
     }

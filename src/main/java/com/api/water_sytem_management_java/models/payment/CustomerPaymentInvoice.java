@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class CustomerPaymentInvoice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String invoiceCode;
-    private double subtotal;
+    private int subtotal;
     private double taxRate;
     private double tax;
     private double unitPrice;
@@ -47,10 +48,10 @@ public class CustomerPaymentInvoice {
         this.fileName = fileName;
         this.payment = payment;
         this.tax = payment.getTax();
-        this.subtotal = payment.getNumMonths() * payment.getUnitPrice();
+        this.subtotal = payment.getNumMonths() * payment.getCustomer().getMonthlyFee();
         this.total = payment.getTax() * (payment.getNumMonths() * payment.getUnitPrice()) + payment.getNumMonths() * payment.getUnitPrice();
         this.unitPrice = payment.getUnitPrice();
-        this.amount = 2000;
+        this.amount = payment.getAmount();
         this.customerName = payment.getCustomer().getName();
         this.customerAddress = payment.getCustomer().getAddress();
         this.customerPhone = payment.getCustomer().getContact();

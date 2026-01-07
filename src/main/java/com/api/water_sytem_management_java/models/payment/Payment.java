@@ -27,7 +27,7 @@ public class Payment implements Serializable {
     private Double amount;
 
     private Double tax;
-    private Double unitPrice;
+    private int unitPrice;
     private String referenceMonth;
     private byte numMonths;
     private String paymentMethod;
@@ -37,23 +37,28 @@ public class Payment implements Serializable {
     private Customer customer;
 
     // Construtores
-    public Payment(Customer customer, Double tax, Double amount, Double unitPrice, byte numMonths, String paymentMethod, Boolean confirmed) {
+    public Payment(Customer customer,
+                   Double tax,
+                   Double amount,
+                   byte numMonths,
+                   String paymentMethod,
+                   Boolean confirmed) {
         this.customer = customer;
         this.amount = amount;
         this.numMonths = numMonths;
         this.paymentMethod = paymentMethod;
         this.confirmed = confirmed;
         this.tax = tax;
-        this.unitPrice = unitPrice;
+        this.unitPrice = customer.getMonthlyFee();
         this.referenceMonth = getReferenceMonth(numMonths);
     }
 
 
-    public Double getUnitPrice() {
+    public int getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(int unitPrice) {
         this.unitPrice = unitPrice;
     }
 

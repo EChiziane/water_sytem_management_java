@@ -16,7 +16,7 @@ public record PaymentInput(
 ) {
 
     public Payment toPayment(Customer customer) {
-        return new Payment(customer, amount, tax, unitPrice, numMonths, paymentMethod, confirmed);
+        return new Payment(customer, amount, tax, numMonths, paymentMethod, confirmed);
     }
 
 

@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,7 +36,8 @@ public class CustomerPaymentInvoiceService {
 
 
     public List<CustomerPaymentInvoice> listAllCustomerInvoices() {
-        return customerPaymentInvoiceRepository.findAll();
+
+        return customerPaymentInvoiceRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     public CustomerPaymentInvoice generateCustomerInvoice(UUID paymentId) throws IOException {

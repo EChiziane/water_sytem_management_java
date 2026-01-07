@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,17 +24,25 @@ public class Customer implements Serializable {
     private String address;
     private CustomerStatus status;
     private byte valve;
+    private int monthlyFee;
     private byte monthsInDebt; // Total number of months in debt
 
 
 
-    public Customer(String name, String contact, String address, CustomerStatus status, byte valve, byte monthsInDebt) {
+    public Customer(String name,
+                    String contact,
+                    String address,
+                    CustomerStatus status,
+                    byte valve,
+                    byte monthsInDebt,
+                  int monthlyFee) {
         this.name = name;
         this.contact = contact;
         this.address = address;
         this.status = status;
         this.valve = valve;
         this.monthsInDebt = monthsInDebt;
+        this.monthlyFee=monthlyFee;
 
     }
 
@@ -42,7 +51,7 @@ public class Customer implements Serializable {
 
     }
 
-    public CustomerOutput CustomerOutput(Customer customer) {
+    public CustomerOutput toCustomerOutput(Customer customer) {
         return new CustomerOutput(
                 customer.id,
                 customer.name,
@@ -52,8 +61,17 @@ public class Customer implements Serializable {
                 customer.valve,
                 customer.monthsInDebt,
                 "",
+                customer.monthlyFee,
                 customer.createdAt
         );
+    }
+
+    public int getMonthlyFee() {
+        return monthlyFee;
+    }
+
+    public void setMonthlyFee(int monthlyFee) {
+        this.monthlyFee = monthlyFee;
     }
 
     public UUID getId() {

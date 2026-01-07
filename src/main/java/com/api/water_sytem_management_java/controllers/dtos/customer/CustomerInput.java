@@ -2,6 +2,8 @@ package com.api.water_sytem_management_java.controllers.dtos.customer;
 
 import com.api.water_sytem_management_java.models.customer.Customer;
 
+import java.math.BigDecimal;
+
 
 public record CustomerInput(
         String name,
@@ -9,7 +11,8 @@ public record CustomerInput(
         String address,
         CustomerStatus status,
         byte valve,
-        byte monthsInDebt) {
+        byte monthsInDebt,
+       int monthlyFee) {
 
     public Customer toCustomer() {
         return new Customer(name,
@@ -17,6 +20,7 @@ public record CustomerInput(
                 address,
                 status,
                 valve,
-                monthsInDebt);
+                monthsInDebt,
+                monthlyFee);
     }
 }

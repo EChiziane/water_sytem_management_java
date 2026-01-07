@@ -1,5 +1,6 @@
 package com.api.water_sytem_management_java.controllers.dtos.payment;
 
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ public record PaymentOutput(
         String customerName,
         Double amount,
         Double tax,
-        Double unitPrice,
+       int unitPrice,
         boolean status,
         String referenceMonth,
 
@@ -24,7 +25,7 @@ public record PaymentOutput(
                          String customerName,
                          Double amount,
                          Double tax,
-                         Double unitPrice,
+                         int unitPrice,
                          boolean status,
                          String referenceMonth,
                          byte numMonths,

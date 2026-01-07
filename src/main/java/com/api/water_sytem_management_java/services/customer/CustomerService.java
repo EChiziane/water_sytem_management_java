@@ -6,6 +6,7 @@ import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerOut
 import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerStatus;
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.repositories.customer.CustomerRepository;
+import com.api.water_sytem_management_java.services.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,9 +21,11 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final EmailService emailService;
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, EmailService emailService) {
         this.customerRepository = customerRepository;
+        this.emailService = emailService;
     }
     @Transactional
     public Customer createNewCustomer(Customer customer) {
@@ -30,6 +33,8 @@ public class CustomerService {
     }
 
     public List<CustomerOutput> fetchAllCustomers() {
+        emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Customers", "Alguem Ta recarregando a lista de Customers");
+
         return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(this::convertToCustomerOutput)
                 .collect(Collectors.toList());
@@ -62,6 +67,6 @@ public class CustomerService {
 
     private CustomerOutput convertToCustomerOutput(Customer customer) {
         boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);
-        return customer.CustomerOutput(customer);
+        return customer.toCustomerOutput(customer);
     }
 }

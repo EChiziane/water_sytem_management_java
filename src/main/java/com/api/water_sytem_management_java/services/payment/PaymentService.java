@@ -6,6 +6,7 @@ import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentOutpu
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.models.payment.Payment;
 import com.api.water_sytem_management_java.repositories.payment.PaymentRepository;
+import com.api.water_sytem_management_java.services.EmailService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final EmailService emailService;
     private final CustomerPaymentInvoiceService customerPaymentInvoiceService;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, CustomerPaymentInvoiceService customerPaymentInvoiceService) {
+    public PaymentService(PaymentRepository paymentRepository, EmailService emailService, CustomerPaymentInvoiceService customerPaymentInvoiceService) {
         this.paymentRepository = paymentRepository;
+        this.emailService = emailService;
         this.customerPaymentInvoiceService = customerPaymentInvoiceService;
     }
 
@@ -98,6 +101,7 @@ public class PaymentService {
     }
 
     public List<PaymentOutput> fetchAllPayments() {
+        emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Agua", "Alguem Ta recarregando a lista de agua");
         return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(this::toPaymentOutput)
