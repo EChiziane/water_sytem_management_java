@@ -33,7 +33,7 @@ public class CustomerService {
     }
 
     public List<CustomerOutput> fetchAllCustomers() {
-        emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Customers", "Alguem Ta recarregando a lista de Customers");
+    //    emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Customers", "Alguem Ta recarregando a lista de Customers");
 
         return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
                 .map(this::convertToCustomerOutput)

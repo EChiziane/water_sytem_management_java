@@ -101,7 +101,7 @@ public class PaymentService {
     }
 
     public List<PaymentOutput> fetchAllPayments() {
-        emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Agua", "Alguem Ta recarregando a lista de agua");
+     //   emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Agua", "Alguem Ta recarregando a lista de agua");
         return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(this::toPaymentOutput)
