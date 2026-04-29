@@ -32,8 +32,8 @@ public class Payment implements Serializable {
     private byte numMonths;
     private String paymentMethod;
     private Boolean confirmed;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "customer_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     // Construtores
@@ -80,18 +80,20 @@ public class Payment implements Serializable {
 
     // Métodos de instância
     public PaymentOutput PaymentOutPut(Payment payment) {
+        Customer c = payment.getCustomer();
+
         return new PaymentOutput(
-                payment.id,
-                payment.customer.getId(),
-                payment.customer.getName(),
-                payment.amount,
-                payment.tax,
-                payment.unitPrice,
+                payment.getId(),
+                c.getId(),
+                c.getName(),
+                payment.getAmount(),
+                payment.getTax(),
+                payment.getUnitPrice(),
                 true,
-                payment.referenceMonth,
-                payment.numMonths,
-                payment.createdAt,
-                payment.paymentMethod
+                payment.getReferenceMonth(),
+                payment.getNumMonths(),
+                payment.getCreatedAt(),
+                payment.getPaymentMethod()
         );
     }
 

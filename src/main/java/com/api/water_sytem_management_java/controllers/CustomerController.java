@@ -25,10 +25,10 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createNewCustomer(@RequestBody CustomerInput customerInput) {
-        Customer customer = customerInput.toCustomer();
-        Customer savedCustomer = customerService.createNewCustomer(customer);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+    public ResponseEntity<CustomerOutput> createNewCustomer(@RequestBody CustomerInput input) {
+        Customer saved = customerService.createNewCustomer(input.toCustomer());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(saved.toCustomerOutput());
     }
 
     @PutMapping("/{id}")

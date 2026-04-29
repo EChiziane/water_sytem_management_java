@@ -26,13 +26,13 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final EmailService emailService;
-    private final CustomerPaymentInvoiceService customerPaymentInvoiceService;
+
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, EmailService emailService, CustomerPaymentInvoiceService customerPaymentInvoiceService) {
+    public PaymentService(PaymentRepository paymentRepository, EmailService emailService) {
         this.paymentRepository = paymentRepository;
         this.emailService = emailService;
-        this.customerPaymentInvoiceService = customerPaymentInvoiceService;
+
     }
 
     public static String buildMonthsDescription(int monthsToPay, int monthsInDebt) {
@@ -113,8 +113,8 @@ public class PaymentService {
         return payment.PaymentOutPut(payment);
     }
 
-    public Optional<Payment> fetchPaymentById(UUID id) {
-        return paymentRepository.findById(id);
+    public Optional<PaymentOutput> fetchPaymentById(UUID id) {
+        return paymentRepository.findById(id).map(this::toPaymentOutput);
     }
 
     @Transactional

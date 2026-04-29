@@ -6,7 +6,6 @@ import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.models.payment.Payment;
 import com.api.water_sytem_management_java.repositories.customer.CustomerRepository;
 import com.api.water_sytem_management_java.repositories.payment.PaymentRepository;
-import com.api.water_sytem_management_java.services.payment.CustomerPaymentInvoiceService;
 import com.api.water_sytem_management_java.services.payment.PaymentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +23,15 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final CustomerRepository customerRepository;
-    private final CustomerPaymentInvoiceService customerPaymentInvoiceService;
+
     private final PaymentRepository paymentRepository;
 
 
     public PaymentController(PaymentService paymentService,
-                             CustomerRepository customerRepository, CustomerPaymentInvoiceService customerPaymentInvoiceService,
+                             CustomerRepository customerRepository,
                              PaymentRepository paymentRepository) {
         this.paymentService = paymentService;
         this.customerRepository = customerRepository;
-        this.customerPaymentInvoiceService = customerPaymentInvoiceService;
         this.paymentRepository = paymentRepository;
     }
 
@@ -55,7 +53,7 @@ public class PaymentController {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         Payment payment = paymentInput.toPayment(customer);
-        customerPaymentInvoiceService.generateCustomerInvoice(paymentRepository.save(payment).getId());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(payment);
     }
     @GetMapping
@@ -69,7 +67,7 @@ public class PaymentController {
         return ResponseEntity.ok(payments);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Payment>> fetchPaymentById(@PathVariable UUID id) {
+    public ResponseEntity<Optional<PaymentOutput>> fetchPaymentById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(paymentService.fetchPaymentById(id));
     }
     @DeleteMapping("/{id}")

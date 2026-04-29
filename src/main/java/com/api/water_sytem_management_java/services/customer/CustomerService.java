@@ -3,46 +3,41 @@ package com.api.water_sytem_management_java.services.customer;
 import com.api.water_sytem_management_java.CustomerNotFoundException;
 import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerInput;
 import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerOutput;
-import com.api.water_sytem_management_java.controllers.dtos.customer.CustomerStatus;
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.repositories.customer.CustomerRepository;
-import com.api.water_sytem_management_java.services.EmailService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final EmailService emailService;
-    @Autowired
-    public CustomerService(CustomerRepository customerRepository, EmailService emailService) {
+
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
-        this.emailService = emailService;
     }
+
     @Transactional
     public Customer createNewCustomer(Customer customer) {
+        customer.setCode(generateCustomerCode());
         return customerRepository.save(customer);
     }
 
     public List<CustomerOutput> fetchAllCustomers() {
-    //    emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Customers", "Alguem Ta recarregando a lista de Customers");
-
-        return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
-                .map(this::convertToCustomerOutput)
-                .collect(Collectors.toList());
+        return customerRepository.findAll().stream()
+                .map(Customer::toCustomerOutput)
+                .toList();
     }
 
     public CustomerOutput fetchCustomerById(UUID id) {
         return customerRepository.findById(id)
-                .map(this::convertToCustomerOutput)
+                .map(Customer::toCustomerOutput)
                 .orElseThrow(() -> new CustomerNotFoundException("No user found with ID: " + id));
     }
 
@@ -53,20 +48,36 @@ public class CustomerService {
     @Transactional
     public Optional<CustomerOutput> updateExistingCustomer(UUID id, CustomerInput input) {
         return customerRepository.findById(id)
-                .map(existingCustomer -> {
-                    existingCustomer.setName(input.name());
-                    existingCustomer.setContact(input.contact());
-                    existingCustomer.setAddress(input.address());
-                    existingCustomer.setStatus(input.status());
-                    existingCustomer.setValve(input.valve());
-                    existingCustomer.setMonthsInDebt(input.monthsInDebt());
-                    Customer updated = customerRepository.save(existingCustomer);
-                    return convertToCustomerOutput(updated);
+                .map(existing -> {
+                    existing.setName(input.name());
+                    existing.setContact(input.contact());
+                    existing.setAddress(input.address());
+                    existing.setStatus(input.status());
+                    existing.setValve(input.valve());
+                    existing.setMonthsInDebt(input.monthsInDebt());
+                    existing.setMonthlyFee(input.monthlyFee());
+                    return customerRepository.save(existing).toCustomerOutput();
                 });
     }
 
-    private CustomerOutput convertToCustomerOutput(Customer customer) {
-        boolean isActive = customer.getStatus() != null && customer.getStatus().equals(CustomerStatus.ATIVO);
-        return customer.toCustomerOutput(customer);
+    private String generateCustomerCode() {
+        int year = LocalDate.now().getYear();
+        String prefix = "WSM-" + year + "-";
+
+        List<Customer> lastCustomers =
+                customerRepository.findByCodeStartingWithOrderByCodeDesc(
+                        prefix,
+                        PageRequest.of(0, 1)
+                );
+
+        int next = 1;
+
+        if (!lastCustomers.isEmpty()) {
+            String lastCode = lastCustomers.get(0).getCode();
+            String numberPart = lastCode.substring(prefix.length());
+            next = Integer.parseInt(numberPart) + 1;
+        }
+
+        return prefix + String.format("%04d", next);
     }
 }
