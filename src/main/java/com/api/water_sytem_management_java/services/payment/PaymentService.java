@@ -88,16 +88,15 @@ public class PaymentService {
 
         if (!payment.customerHasDebt()) {
             throw new RuntimeException("Customer has no debt");
-
         }
+
         if (payment.isAmountGreaterThanDebt()) {
             throw new RuntimeException("Your months are more than you have");
-
         }
 
         payment.dowGradeMonthsOnDebt();
-        //    customerPaymentInvoiceService.createCustomerPaymentInvoice(paymentRepository.save(payment).getId());
-        return (payment);
+
+        return paymentRepository.save(payment); // 🔥 AGORA SIM
     }
 
     public List<PaymentOutput> fetchAllPayments() {

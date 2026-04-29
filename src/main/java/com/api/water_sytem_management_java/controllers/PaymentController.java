@@ -47,14 +47,18 @@ public class PaymentController {
         Payment updatedPayment = paymentService.updateExistingPayment(id, paymentInput, customer);
         return ResponseEntity.ok(updatedPayment);
     }
+
     @PostMapping
     public ResponseEntity<Payment> createNewPayment(@RequestBody PaymentInput paymentInput) throws IOException {
+
         Customer customer = customerRepository.findById(paymentInput.customerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         Payment payment = paymentInput.toPayment(customer);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(payment);
+        Payment saved = paymentService.validateAndSavePayment(payment); // 🔥 AQUI
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     @GetMapping
     public ResponseEntity<List<PaymentOutput>> fetchAllPayments() {
