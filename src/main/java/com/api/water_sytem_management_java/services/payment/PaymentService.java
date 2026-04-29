@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class PaymentService {
@@ -37,43 +38,24 @@ public class PaymentService {
     }
 
     public static String buildMonthsDescription(int monthsToPay, int monthsInDebt) {
-        if (monthsToPay <= 0 || monthsInDebt <= 0) {
-            throw new IllegalArgumentException("Os meses a pagar e os meses em dívida devem ser maiores que 0.");
-        }
 
-        LocalDate currentDate = LocalDate.now();
-
-        // Se estivermos antes do dia 10, ignorar o mês atual nos cálculos
-        boolean ignoreCurrentMonth = currentDate.getDayOfMonth() <= 10;
-        if (ignoreCurrentMonth) {
-            monthsInDebt += 1; // Ajustar para ignorar o mês atual
-        }
+        LocalDate today = LocalDate.now();
 
         if (monthsToPay > monthsInDebt) {
-            throw new IllegalArgumentException("Os meses a pagar não podem ser maiores que os meses em dívida.");
+            throw new IllegalArgumentException("Meses a pagar > dívida");
         }
 
-        StringBuilder monthsString = new StringBuilder();
+        // 🔥 CORREÇÃO REAL (SEM DIA 5)
+        LocalDate oldestDebtMonth = today.minusMonths(monthsInDebt);
 
-        // Determina o mês mais antigo em dívida
-        LocalDate oldestDebtMonth = currentDate.minusMonths(monthsInDebt);
-
-        for (int i = 0; i < monthsToPay; i++) {
-            LocalDate monthToPay = oldestDebtMonth.plusMonths(i);
-            String monthName = monthToPay.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "BR"));
-            int year = monthToPay.getYear();
-
-            monthsString.append(monthName.substring(0, 1).toUpperCase())
-                    .append(monthName.substring(1).toLowerCase())
-                    .append("-")
-                    .append(year);
-
-            if (i < monthsToPay - 1) {
-                monthsString.append(" | ");
-            }
-        }
-
-        return monthsString.toString();
+        return IntStream.range(0, monthsToPay)
+                .mapToObj(i -> oldestDebtMonth.plusMonths(i))
+                .map(date -> {
+                    String m = date.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "PT"));
+                    return m.substring(0,1).toUpperCase() + m.substring(1).toLowerCase()
+                            + "-" + date.getYear();
+                })
+                .collect(Collectors.joining(" | "));
     }
 
 
@@ -104,15 +86,23 @@ public class PaymentService {
             throw new RuntimeException("Your months are more than you have");
         }
 
+        // ✅ GERAR REFERENCE MONTH (AQUI!)
+        payment.setReferenceMonth(
+                buildMonthsDescription(
+                        payment.getNumMonths(),
+                        payment.getCustomer().getMonthsInDebt()
+                )
+        );
+
         payment.dowGradeMonthsOnDebt();
+
         payment.setReferenceCode(generateReferenceCode());
         payment.setConfirmed(true);
 
-        // 🔥 AQUI ESTÁ O UPGRADE REAL
         var user = SecurityUtils.getLoggedUser();
         payment.setCreatedBy(user);
 
-        return paymentRepository.save(payment); // 🔥 AGORA SIM
+        return paymentRepository.save(payment);
     }
 
     public List<PaymentOutput> fetchAllPayments() {
