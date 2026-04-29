@@ -31,10 +31,21 @@ public class Payment implements Serializable {
     private String referenceMonth;
     private byte numMonths;
     private String paymentMethod;
-    private Boolean confirmed;
+    private Boolean confirmed = true;
+    @Column(unique = true)
+    private String referenceCode;
+
+    public void setReferenceCode(String referenceCode) {
+        this.referenceCode = referenceCode;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    public String getReferenceCode() {
+        return referenceCode;
+    }
 
     // Construtores
     public Payment(Customer customer,
@@ -47,7 +58,7 @@ public class Payment implements Serializable {
         this.amount = amount;
         this.numMonths = numMonths;
         this.paymentMethod = paymentMethod;
-        this.confirmed = confirmed;
+        this.confirmed = confirmed != null ? confirmed : true;
         this.tax = tax;
         this.unitPrice = customer.getMonthlyFee();
         this.referenceMonth = getReferenceMonth(numMonths);
@@ -84,12 +95,18 @@ public class Payment implements Serializable {
 
         return new PaymentOutput(
                 payment.getId(),
+                payment.getReferenceCode(),
                 c.getId(),
                 c.getName(),
+                c.getContact(),
+                c.getAddress(),
+                c.getValve(),
+                c.getMonthlyFee(),
+
                 payment.getAmount(),
                 payment.getTax(),
                 payment.getUnitPrice(),
-                true,
+                payment.getConfirmed(),
                 payment.getReferenceMonth(),
                 payment.getNumMonths(),
                 payment.getCreatedAt(),

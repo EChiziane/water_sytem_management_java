@@ -77,10 +77,19 @@ public class PaymentService {
 
 
     public List<PaymentOutput> fetchPaymentsByCustomerId(UUID customerId) {
-        return paymentRepository.findByCustomerId(customerId)
+        return paymentRepository.findByCustomerId(Sort.by(Sort.Direction.DESC,"createdAt"),customerId )
                 .stream()
                 .map(this::toPaymentOutput)
                 .collect(Collectors.toList());
+    }
+
+
+    private String generateReferenceCode() {
+        int year = LocalDate.now().getYear();
+
+        long count = paymentRepository.count(); // ou melhor: count por ano
+
+        return String.format("WSM-%d-%06d", year, count + 1);
     }
 
     @Transactional
@@ -95,7 +104,8 @@ public class PaymentService {
         }
 
         payment.dowGradeMonthsOnDebt();
-
+        payment.setReferenceCode(generateReferenceCode());
+        payment.setConfirmed(true);
         return paymentRepository.save(payment); // 🔥 AGORA SIM
     }
 

@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
     List<Payment> findAll(Sort sort); // Método para buscar e ordenar por data de criação decrescente
 
-    List<Payment> findByCustomerId(UUID customerId);
+    List<Payment> findByCustomerId(Sort sort,UUID customerId);
 }
