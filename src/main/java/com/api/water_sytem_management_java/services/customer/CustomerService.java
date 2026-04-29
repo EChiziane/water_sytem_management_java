@@ -25,7 +25,12 @@ public class CustomerService {
 
     @Transactional
     public Customer createNewCustomer(Customer customer) {
-        customer.setCode(generateCustomerCode());
+
+        // 🔥 GARANTE QUE SEMPRE TEM CODE
+        if (customer.getCode() == null || customer.getCode().isBlank()) {
+            customer.setCode(generateCustomerCode());
+        }
+
         return customerRepository.save(customer);
     }
 
@@ -49,6 +54,7 @@ public class CustomerService {
     public Optional<CustomerOutput> updateExistingCustomer(UUID id, CustomerInput input) {
         return customerRepository.findById(id)
                 .map(existing -> {
+
                     existing.setName(input.name());
                     existing.setContact(input.contact());
                     existing.setAddress(input.address());
@@ -56,6 +62,12 @@ public class CustomerService {
                     existing.setValve(input.valve());
                     existing.setMonthsInDebt(input.monthsInDebt());
                     existing.setMonthlyFee(input.monthlyFee());
+
+                    // 🔥 GARANTE CODE NO UPDATE TAMBÉM
+                    if (existing.getCode() == null || existing.getCode().isBlank()) {
+                        existing.setCode(generateCustomerCode());
+                    }
+
                     return customerRepository.save(existing).toCustomerOutput();
                 });
     }
