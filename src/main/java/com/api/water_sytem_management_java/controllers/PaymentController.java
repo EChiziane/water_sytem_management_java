@@ -56,9 +56,9 @@ public class PaymentController {
 
         Payment payment = paymentInput.toPayment(customer);
 
-        Payment saved = paymentService.validateAndSavePayment(payment); // 🔥 AQUI
+        Payment savedPayment = paymentService.validateAndSavePayment(payment);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPayment);
     }
     @GetMapping
     public ResponseEntity<List<PaymentOutput>> fetchAllPayments() {

@@ -5,8 +5,10 @@ import java.util.UUID;
 
 public record PaymentOutput(
         UUID id,
-        String referenceCode,
         UUID customerId,
+        String referenceCode,
+
+        // 🔥 CUSTOMER DATA COMPLETO
         String customerName,
         String customerContact,
         String customerAddress,
@@ -16,9 +18,12 @@ public record PaymentOutput(
         Double amount,
         Double tax,
         int unitPrice,
-        boolean confirmed,
+        Boolean confirmed,
         String referenceMonth,
         byte numMonths,
         LocalDateTime paymentDate,
-        String paymentMethod
+        String paymentMethod,
+
+        UUID createdBy,
+        String createdByName
 ) {}

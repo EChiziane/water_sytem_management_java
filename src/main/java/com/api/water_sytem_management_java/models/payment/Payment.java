@@ -2,10 +2,10 @@ package com.api.water_sytem_management_java.models.payment;
 
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentOutput;
 import com.api.water_sytem_management_java.models.customer.Customer;
+import com.api.water_sytem_management_java.models.user.User;
 import jakarta.persistence.*;
 
-import java.io.Serial;
-import java.io.Serializable;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -16,38 +16,35 @@ import java.util.stream.IntStream;
 
 @Entity
 @Table(name = "tb_wsm_payments")
-public class Payment implements Serializable {
+public class Payment {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
-    private final LocalDateTime createdAt = LocalDateTime.now();
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private Double amount;
 
+    private Double amount;
     private Double tax;
     private int unitPrice;
     private String referenceMonth;
     private byte numMonths;
     private String paymentMethod;
-    private Boolean confirmed = true;
-    @Column(unique = true)
-    private String referenceCode;
+    private Boolean confirmed;
 
-    public void setReferenceCode(String referenceCode) {
-        this.referenceCode = referenceCode;
-    }
+    private final LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    public String getReferenceCode() {
-        return referenceCode;
-    }
+    // 🔥 NOVO → USER QUE CRIOU
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
-    // Construtores
+    @Column(name = "reference_code", unique = true)
+    private String referenceCode;
+    public Payment() {}
+
     public Payment(Customer customer,
                    Double tax,
                    Double amount,
@@ -58,23 +55,107 @@ public class Payment implements Serializable {
         this.amount = amount;
         this.numMonths = numMonths;
         this.paymentMethod = paymentMethod;
-        this.confirmed = confirmed != null ? confirmed : true;
+        this.confirmed = confirmed;
         this.tax = tax;
         this.unitPrice = customer.getMonthlyFee();
-        this.referenceMonth = getReferenceMonth(numMonths);
     }
 
+    public void dowGradeMonthsOnDebt() {
+        if (customerHasDebt() && !isAmountGreaterThanDebt()) {
+            customer.updateDebt(numMonths);
+        }
 
-    public int getUnitPrice() {
-        return unitPrice;
+
     }
 
-    public void setUnitPrice(int unitPrice) {
-        this.unitPrice = unitPrice;
+    public void upGradeMonthsOnDebt() {
+        customer.updateDebt((byte) -1);
     }
 
-    public Payment() {
+    public String getReferenceCode() {
+        return referenceCode;
     }
+
+    public void setReferenceCode(String referenceCode) {
+        this.referenceCode = referenceCode;
+    }
+    public boolean customerHasDebt() {
+        return customer.hasOutstandingDebt();
+    }
+
+    public boolean isAmountGreaterThanDebt() {
+        return customer.isValueGreaterThanDebt(numMonths);
+    }
+
+    public PaymentOutput toOutput() {
+
+        var c = this.customer;
+
+        return new PaymentOutput(
+                id,
+                c.getId(),
+                referenceCode,
+
+                // 🔥 CUSTOMER
+                c.getName(),
+                c.getContact(),
+                c.getAddress(),
+                c.getValve(),
+                c.getMonthlyFee(),
+
+                amount,
+                tax,
+                unitPrice,
+                confirmed != null && confirmed,
+                referenceMonth,
+                numMonths,
+                createdAt,
+                paymentMethod,
+
+                createdBy != null ? UUID.fromString(createdBy.getId()) : null,
+                createdBy != null ? createdBy.getName() : "Sistema"
+        );
+    }
+
+    // GETTERS / SETTERS
+
+    public UUID getId() { return id; }
+
+    public Customer getCustomer() { return customer; }
+
+    public void setCustomer(Customer customer) { this.customer = customer; }
+
+    public Double getAmount() { return amount; }
+
+    public void setAmount(Double amount) { this.amount = amount; }
+
+    public Double getTax() { return tax; }
+
+    public void setTax(Double tax) { this.tax = tax; }
+
+    public int getUnitPrice() { return unitPrice; }
+
+    public byte getNumMonths() { return numMonths; }
+
+    public void setNumMonths(byte numMonths) { this.numMonths = numMonths; }
+
+    public String getPaymentMethod() { return paymentMethod; }
+
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
+
+    public Boolean getConfirmed() { return confirmed; }
+
+    public void setConfirmed(Boolean confirmed) { this.confirmed = confirmed; }
+
+    public String getReferenceMonth() { return referenceMonth; }
+
+    public void setReferenceMonth(String referenceMonth) { this.referenceMonth = referenceMonth; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+
+    public User getCreatedBy() { return createdBy; }
+
+    public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 
     // Método estático
     public static String getReferenceMonth(int n) {
@@ -89,118 +170,4 @@ public class Payment implements Serializable {
                 .collect(Collectors.joining(", "));
     }
 
-    // Métodos de instância
-    public PaymentOutput PaymentOutPut(Payment payment) {
-        Customer c = payment.getCustomer();
-
-        return new PaymentOutput(
-                payment.getId(),
-                payment.getReferenceCode(),
-                c.getId(),
-                c.getName(),
-                c.getContact(),
-                c.getAddress(),
-                c.getValve(),
-                c.getMonthlyFee(),
-
-                payment.getAmount(),
-                payment.getTax(),
-                payment.getUnitPrice(),
-                payment.getConfirmed(),
-                payment.getReferenceMonth(),
-                payment.getNumMonths(),
-                payment.getCreatedAt(),
-                payment.getPaymentMethod()
-        );
-    }
-
-    // Getters e Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-
-    public void dowGradeMonthsOnDebt() {
-        if (customerHasDebt() && !isAmountGreaterThanDebt()) {
-            customer.updateDebt(numMonths);
-        }
-
-
-    }
-
-    public void upGradeMonthsOnDebt() {
-        customer.updateDebt((byte) -1);
-    }
-
-    public boolean customerHasDebt() {
-        return customer.hasOutstandingDebt();
-    }
-
-    public boolean isAmountGreaterThanDebt() {
-        return customer.isValueGreaterThanDebt(numMonths);
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public String getReferenceMonth() {
-        return referenceMonth;
-    }
-
-    public void setReferenceMonth(String referenceMonth) {
-        this.referenceMonth = referenceMonth;
-    }
-
-    public byte getNumMonths() {
-        return numMonths;
-    }
-
-    public void setNumMonths(byte numMonths) {
-        this.numMonths = numMonths;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public Double getTax() {
-        return tax;
-    }
-
-    public void setTax(Double tax) {
-        this.tax = tax;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
 }

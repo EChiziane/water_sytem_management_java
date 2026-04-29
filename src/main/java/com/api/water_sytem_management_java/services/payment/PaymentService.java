@@ -3,6 +3,7 @@ package com.api.water_sytem_management_java.services.payment;
 
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentInput;
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentOutput;
+import com.api.water_sytem_management_java.infra.security.SecurityUtils;
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.models.payment.Payment;
 import com.api.water_sytem_management_java.repositories.payment.PaymentRepository;
@@ -106,6 +107,11 @@ public class PaymentService {
         payment.dowGradeMonthsOnDebt();
         payment.setReferenceCode(generateReferenceCode());
         payment.setConfirmed(true);
+
+        // 🔥 AQUI ESTÁ O UPGRADE REAL
+        var user = SecurityUtils.getLoggedUser();
+        payment.setCreatedBy(user);
+
         return paymentRepository.save(payment); // 🔥 AGORA SIM
     }
 
@@ -119,7 +125,7 @@ public class PaymentService {
 
     private PaymentOutput toPaymentOutput(Payment payment) {
 
-        return payment.PaymentOutPut(payment);
+        return payment.toOutput();
     }
 
     public Optional<PaymentOutput> fetchPaymentById(UUID id) {
