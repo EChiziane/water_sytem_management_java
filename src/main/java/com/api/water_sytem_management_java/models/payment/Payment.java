@@ -1,18 +1,14 @@
 package com.api.water_sytem_management_java.models.payment;
 
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentOutput;
+import com.api.water_sytem_management_java.models.MonthlyCharge;
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.models.user.User;
 import jakarta.persistence.*;
 
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.TextStyle;
-import java.util.Locale;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Entity
 @Table(name = "tb_wsm_payments")
@@ -36,13 +32,24 @@ public class Payment {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    // 🔥 NOVO → USER QUE CRIOU
+    // 🔥 USER
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
 
+    // 🔥 CÓDIGO
     @Column(name = "reference_code", unique = true)
     private String referenceCode;
+
+    // 🔥 NOVO → RELAÇÃO COM MESES
+    @ManyToMany
+    @JoinTable(
+            name = "payment_monthly_charges",
+            joinColumns = @JoinColumn(name = "payment_id"),
+            inverseJoinColumns = @JoinColumn(name = "monthly_charge_id")
+    )
+    private List<MonthlyCharge> months;
+
     public Payment() {}
 
     public Payment(Customer customer,
@@ -60,32 +67,9 @@ public class Payment {
         this.unitPrice = customer.getMonthlyFee();
     }
 
-    public void dowGradeMonthsOnDebt() {
-        if (customerHasDebt() && !isAmountGreaterThanDebt()) {
-            customer.updateDebt(numMonths);
-        }
+    // ================== LOGIC ==================
 
 
-    }
-
-    public void upGradeMonthsOnDebt() {
-        customer.updateDebt((byte) -1);
-    }
-
-    public String getReferenceCode() {
-        return referenceCode;
-    }
-
-    public void setReferenceCode(String referenceCode) {
-        this.referenceCode = referenceCode;
-    }
-    public boolean customerHasDebt() {
-        return customer.hasOutstandingDebt();
-    }
-
-    public boolean isAmountGreaterThanDebt() {
-        return customer.isValueGreaterThanDebt(numMonths);
-    }
 
     public PaymentOutput toOutput() {
 
@@ -96,7 +80,6 @@ public class Payment {
                 c.getId(),
                 referenceCode,
 
-                // 🔥 CUSTOMER
                 c.getName(),
                 c.getContact(),
                 c.getAddress(),
@@ -117,7 +100,7 @@ public class Payment {
         );
     }
 
-    // GETTERS / SETTERS
+    // ================== GETTERS ==================
 
     public UUID getId() { return id; }
 
@@ -157,17 +140,11 @@ public class Payment {
 
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 
-    // Método estático
-    public static String getReferenceMonth(int n) {
-        if (n <= 0) {
-            throw new IllegalArgumentException("O número de meses deve ser maior que zero.");
-        }
+    public String getReferenceCode() { return referenceCode; }
 
-        LocalDate today = LocalDate.now();
-        return IntStream.range(0, n)
-                .mapToObj(i -> today.minusMonths(n - 1 - i))
-                .map(date -> date.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "PT")))
-                .collect(Collectors.joining(", "));
-    }
+    public void setReferenceCode(String referenceCode) { this.referenceCode = referenceCode; }
 
+    public List<MonthlyCharge> getMonths() { return months; }
+
+    public void setMonths(List<MonthlyCharge> months) { this.months = months; }
 }

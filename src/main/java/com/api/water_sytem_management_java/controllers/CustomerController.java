@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/customers")
@@ -25,35 +24,68 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerOutput> createNewCustomer(@RequestBody CustomerInput input) {
-        Customer saved = customerService.createNewCustomer(input.toCustomer());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(saved.toCustomerOutput());
+    public ResponseEntity<CustomerOutput> createNewCustomer(
+            @RequestBody CustomerInput input
+    ) {
+
+        Customer saved =
+                customerService.createNewCustomer(
+                        input.toCustomer(),
+                        input.monthsInDebt()
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(
+                        customerService.fetchCustomerById(
+                                saved.getId()
+                        )
+                );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerOutput> updateExistingCustomer(@PathVariable UUID id, @RequestBody CustomerInput customerInput) {
-        Optional<CustomerOutput> updatedCustomer = customerService.updateExistingCustomer(id, customerInput);
+    public ResponseEntity<CustomerOutput> updateExistingCustomer(
+            @PathVariable UUID id,
+            @RequestBody CustomerInput customerInput
+    ) {
+
+        Optional<CustomerOutput> updatedCustomer =
+                customerService.updateExistingCustomer(
+                        id,
+                        customerInput
+                );
+
         return updatedCustomer
-                .map(customer -> ResponseEntity.ok().body(customer))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.notFound().build()
+                );
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerOutput>> fetchAllCustomers() {
-        List<CustomerOutput> customers = customerService.fetchAllCustomers();
-        return ResponseEntity.ok(customers);
+    public ResponseEntity<List<CustomerOutput>>
+    fetchAllCustomers() {
+
+        return ResponseEntity.ok(
+                customerService.fetchAllCustomers()
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerOutput> fetchCustomerById(@PathVariable UUID id) {
-        CustomerOutput customer = customerService.fetchCustomerById(id);
-        return ResponseEntity.ok(customer);
+    public ResponseEntity<CustomerOutput>
+    fetchCustomerById(@PathVariable UUID id) {
+
+        return ResponseEntity.ok(
+                customerService.fetchCustomerById(id)
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeCustomerById(@PathVariable UUID id) {
+    public ResponseEntity<Void>
+    removeCustomerById(@PathVariable UUID id) {
+
         customerService.removeCustomerById(id);
+
         return ResponseEntity.noContent().build();
     }
 }

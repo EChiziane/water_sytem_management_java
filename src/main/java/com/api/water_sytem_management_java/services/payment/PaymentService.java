@@ -1,11 +1,12 @@
 package com.api.water_sytem_management_java.services.payment;
 
-
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentInput;
 import com.api.water_sytem_management_java.controllers.dtos.payment.PaymentOutput;
 import com.api.water_sytem_management_java.infra.security.SecurityUtils;
+import com.api.water_sytem_management_java.models.MonthlyCharge;
 import com.api.water_sytem_management_java.models.customer.Customer;
 import com.api.water_sytem_management_java.models.payment.Payment;
+import com.api.water_sytem_management_java.repositories.MonthlyChargeRepository;
 import com.api.water_sytem_management_java.repositories.payment.PaymentRepository;
 import com.api.water_sytem_management_java.services.EmailService;
 import jakarta.transaction.Transactional;
@@ -15,86 +16,74 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final EmailService emailService;
 
+    @Autowired
+    private MonthlyChargeRepository monthlyChargeRepository;
+
+    private final EmailService emailService;
 
     @Autowired
     public PaymentService(PaymentRepository paymentRepository, EmailService emailService) {
         this.paymentRepository = paymentRepository;
         this.emailService = emailService;
-
     }
 
-    public static String buildMonthsDescription(int monthsToPay, int monthsInDebt) {
-
-        LocalDate today = LocalDate.now();
-
-        if (monthsToPay > monthsInDebt) {
-            throw new IllegalArgumentException("Meses a pagar > dívida");
-        }
-
-        // 🔥 CORREÇÃO REAL (SEM DIA 5)
-        LocalDate oldestDebtMonth = today.minusMonths(monthsInDebt);
-
-        return IntStream.range(0, monthsToPay)
-                .mapToObj(i -> oldestDebtMonth.plusMonths(i))
-                .map(date -> {
-                    String m = date.getMonth().getDisplayName(TextStyle.FULL, new Locale("pt", "PT"));
-                    return m.substring(0,1).toUpperCase() + m.substring(1).toLowerCase()
-                            + "-" + date.getYear();
-                })
-                .collect(Collectors.joining(" | "));
-    }
-
-
-    public List<PaymentOutput> fetchPaymentsByCustomerId(UUID customerId) {
-        return paymentRepository.findByCustomerId(Sort.by(Sort.Direction.DESC,"createdAt"),customerId )
-                .stream()
-                .map(this::toPaymentOutput)
-                .collect(Collectors.toList());
-    }
-
-
-    private String generateReferenceCode() {
-        int year = LocalDate.now().getYear();
-
-        long count = paymentRepository.count(); // ou melhor: count por ano
-
-        return String.format("WSM-%d-%06d", year, count + 1);
-    }
+    // ================== CREATE ==================
 
     @Transactional
     public Payment validateAndSavePayment(Payment payment) throws IOException {
 
-        if (!payment.customerHasDebt()) {
+        var unpaidMonths = monthlyChargeRepository
+                .findByCustomerIdAndPaidFalseOrderByReferenceMonthAsc(
+                        payment.getCustomer().getId()
+                );
+
+        if (unpaidMonths.isEmpty()) {
             throw new RuntimeException("Customer has no debt");
         }
 
-        if (payment.isAmountGreaterThanDebt()) {
-            throw new RuntimeException("Your months are more than you have");
+        if (payment.getNumMonths() > unpaidMonths.size()) {
+            throw new RuntimeException("Meses a pagar maior que dívida");
         }
 
-        // ✅ GERAR REFERENCE MONTH (AQUI!)
-        payment.setReferenceMonth(
-                buildMonthsDescription(
-                        payment.getNumMonths(),
-                        payment.getCustomer().getMonthsInDebt()
-                )
-        );
+        // 🔥 MESES CORRETOS (MAIS ANTIGOS)
+        var monthsToPay = unpaidMonths.subList(0, payment.getNumMonths());
 
-        payment.dowGradeMonthsOnDebt();
+        // 🔥 RELAÇÃO REAL
+        payment.setMonths(monthsToPay);
+
+        // 🔥 STRING PARA FRONT
+        String referenceMonth = monthsToPay.stream()
+                .map(MonthlyCharge::getReferenceMonth)
+                .collect(Collectors.joining(" | "));
+
+        payment.setReferenceMonth(referenceMonth);
+
+        // 🔥 MARCAR PAGOS
+        monthsToPay.forEach(m -> m.setPaid(true));
+
+         unpaidMonths =
+                monthlyChargeRepository
+                        .findByCustomerIdAndPaidFalseOrderByReferenceMonthAsc(
+                                payment.getCustomer().getId()
+                        );
+
+         monthsToPay =
+                unpaidMonths.subList(
+                        0,
+                        payment.getNumMonths()
+                );
+
+        monthsToPay.forEach(m -> m.setPaid(true));
 
         payment.setReferenceCode(generateReferenceCode());
         payment.setConfirmed(true);
@@ -105,17 +94,23 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    // ================== FETCH ==================
+
     public List<PaymentOutput> fetchAllPayments() {
-     //   emailService.enviarEmailTexto("eddybruno43@gmail.com", "Email de Agua", "Alguem Ta recarregando a lista de agua");
         return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
                 .stream()
                 .map(this::toPaymentOutput)
                 .collect(Collectors.toList());
     }
 
-    private PaymentOutput toPaymentOutput(Payment payment) {
-
-        return payment.toOutput();
+    public List<PaymentOutput> fetchPaymentsByCustomerId(UUID customerId) {
+        return paymentRepository.findByCustomerId(
+                        Sort.by(Sort.Direction.DESC, "createdAt"),
+                        customerId
+                )
+                .stream()
+                .map(this::toPaymentOutput)
+                .collect(Collectors.toList());
     }
 
     public Optional<PaymentOutput> fetchPaymentById(UUID id) {
@@ -128,19 +123,29 @@ public class PaymentService {
     }
 
     @Transactional
-    public Payment updateExistingPayment(UUID id, PaymentInput paymentInput, Customer customer) {
-        Payment existingPayment = paymentRepository.findById(id)
+    public Payment updateExistingPayment(UUID id, PaymentInput input, Customer customer) {
+
+        Payment existing = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        existingPayment.setAmount(paymentInput.amount());
-        existingPayment.setNumMonths(paymentInput.numMonths());
-        existingPayment.setPaymentMethod(paymentInput.paymentMethod());
-        existingPayment.setConfirmed(paymentInput.confirmed());
-        existingPayment.setReferenceMonth(Payment.getReferenceMonth(paymentInput.numMonths()));
-        existingPayment.setCustomer(customer);
+        existing.setAmount(input.amount());
+        existing.setNumMonths(input.numMonths());
+        existing.setPaymentMethod(input.paymentMethod());
+        existing.setConfirmed(input.confirmed());
+        existing.setCustomer(customer);
 
-        return paymentRepository.save(existingPayment);
+        return paymentRepository.save(existing);
     }
 
+    private PaymentOutput toPaymentOutput(Payment payment) {
+        return payment.toOutput();
+    }
 
+    // ================== CODE ==================
+
+    private String generateReferenceCode() {
+        int year = LocalDate.now().getYear();
+        long count = paymentRepository.count();
+        return String.format("WSM-%d-%06d", year, count + 1);
+    }
 }
