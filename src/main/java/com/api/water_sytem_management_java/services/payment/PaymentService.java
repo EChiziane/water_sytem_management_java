@@ -9,6 +9,7 @@ import com.api.water_sytem_management_java.models.payment.Payment;
 import com.api.water_sytem_management_java.repositories.MonthlyChargeRepository;
 import com.api.water_sytem_management_java.repositories.payment.PaymentRepository;
 import com.api.water_sytem_management_java.services.EmailService;
+import com.api.water_sytem_management_java.services.MonthlyChargeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -26,126 +27,381 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    @Autowired
-    private MonthlyChargeRepository monthlyChargeRepository;
+    private final MonthlyChargeService monthlyChargeService;
+
+    private final MonthlyChargeRepository monthlyChargeRepository;
 
     private final EmailService emailService;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, EmailService emailService) {
-        this.paymentRepository = paymentRepository;
-        this.emailService = emailService;
+    public PaymentService(
+            PaymentRepository paymentRepository,
+            MonthlyChargeService monthlyChargeService,
+            MonthlyChargeRepository monthlyChargeRepository,
+            EmailService emailService
+    ) {
+
+        this.paymentRepository =
+                paymentRepository;
+
+        this.monthlyChargeService =
+                monthlyChargeService;
+
+        this.monthlyChargeRepository =
+                monthlyChargeRepository;
+
+        this.emailService =
+                emailService;
     }
 
-    // ================== CREATE ==================
+    // =====================================================
+    // CREATE PAYMENT
+    // =====================================================
 
     @Transactional
-    public Payment validateAndSavePayment(Payment payment) throws IOException {
+    public Payment validateAndSavePayment(
+            Payment payment
+    ) throws IOException {
 
-        var unpaidMonths = monthlyChargeRepository
-                .findByCustomerIdAndPaidFalseOrderByReferenceMonthAsc(
-                        payment.getCustomer().getId()
+        // ================================================
+        // GUARANTEE TIMELINE
+        // ================================================
+
+        monthlyChargeService
+                .syncCustomerTimeline(
+                        payment.getCustomer()
                 );
 
-        if (unpaidMonths.isEmpty()) {
-            throw new RuntimeException("Customer has no debt");
-        }
+        // ================================================
+        // GET REAL UNPAID MONTHS
+        // ================================================
 
-        if (payment.getNumMonths() > unpaidMonths.size()) {
-            throw new RuntimeException("Meses a pagar maior que dívida");
-        }
+        List<MonthlyCharge> unpaidMonths =
 
-        // 🔥 MESES CORRETOS (MAIS ANTIGOS)
-        var monthsToPay = unpaidMonths.subList(0, payment.getNumMonths());
-
-        // 🔥 RELAÇÃO REAL
-        payment.setMonths(monthsToPay);
-
-        // 🔥 STRING PARA FRONT
-        String referenceMonth = monthsToPay.stream()
-                .map(MonthlyCharge::getReferenceMonth)
-                .collect(Collectors.joining(" | "));
-
-        payment.setReferenceMonth(referenceMonth);
-
-        // 🔥 MARCAR PAGOS
-        monthsToPay.forEach(m -> m.setPaid(true));
-
-         unpaidMonths =
-                monthlyChargeRepository
-                        .findByCustomerIdAndPaidFalseOrderByReferenceMonthAsc(
+                monthlyChargeService
+                        .getCustomerUnpaidEntities(
                                 payment.getCustomer().getId()
                         );
+        // ================================================
+        // NO DEBT
+        // ================================================
 
-         monthsToPay =
+        if (unpaidMonths.isEmpty()) {
+
+            throw new RuntimeException(
+                    "Cliente sem dívida"
+            );
+        }
+
+        // ================================================
+        // INVALID MONTH COUNT
+        // ================================================
+
+        if (
+                payment.getNumMonths()
+                        > unpaidMonths.size()
+        ) {
+
+            throw new RuntimeException(
+
+                    "Quantidade de meses maior que dívida"
+            );
+        }
+
+        // ================================================
+        // SELECT MONTHS TO PAY
+        // ================================================
+
+        List<MonthlyCharge> monthsToPay =
+
                 unpaidMonths.subList(
                         0,
                         payment.getNumMonths()
                 );
 
-        monthsToPay.forEach(m -> m.setPaid(true));
+        // ================================================
+        // GENERATE REFERENCE STRING
+        // ================================================
 
-        payment.setReferenceCode(generateReferenceCode());
+        String referenceMonth =
+
+                monthsToPay.stream()
+
+                        .map(
+                                MonthlyCharge::getFormattedReference
+                        )
+
+                        .collect(
+                                Collectors.joining(" | ")
+                        );
+
+        payment.setReferenceMonth(
+                referenceMonth
+        );
+
+        // ================================================
+        // GENERATE CODE
+        // ================================================
+
+        payment.setReferenceCode(
+                generateReferenceCode()
+        );
+
+        // ================================================
+        // DEFAULT STATUS
+        // ================================================
+
         payment.setConfirmed(true);
 
-        var user = SecurityUtils.getLoggedUser();
+        // ================================================
+        // LOGGED USER
+        // ================================================
+
+        var user =
+                SecurityUtils.getLoggedUser();
+
         payment.setCreatedBy(user);
 
-        return paymentRepository.save(payment);
+        // ================================================
+        // LINK MONTHS TO PAYMENT
+        // ================================================
+
+        for (
+                MonthlyCharge month : monthsToPay
+        ) {
+
+            payment.addMonth(month);
+        }
+
+        // ================================================
+        // SAVE PAYMENT FIRST
+        // ================================================
+
+        Payment savedPayment =
+                paymentRepository.save(payment);
+
+        // ================================================
+        // MARK MONTHS AS PAID
+        // ================================================
+
+        for (
+                MonthlyCharge month : monthsToPay
+        ) {
+
+            month.markAsPaid(
+                    savedPayment
+            );
+
+            monthlyChargeRepository.save(
+                    month
+            );
+        }
+
+        // ================================================
+        // OPTIONAL EMAIL
+        // ================================================
+
+        /*
+        emailService.sendPaymentConfirmation(
+                savedPayment
+        );
+        */
+
+        return savedPayment;
     }
 
-    // ================== FETCH ==================
+    // =====================================================
+    // FETCH ALL
+    // =====================================================
 
     public List<PaymentOutput> fetchAllPayments() {
-        return paymentRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"))
+
+        return paymentRepository
+
+                .findAll(
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "createdAt"
+                        )
+                )
+
                 .stream()
+
                 .map(this::toPaymentOutput)
+
                 .collect(Collectors.toList());
     }
 
-    public List<PaymentOutput> fetchPaymentsByCustomerId(UUID customerId) {
-        return paymentRepository.findByCustomerId(
-                        Sort.by(Sort.Direction.DESC, "createdAt"),
+    // =====================================================
+    // FETCH BY CUSTOMER
+    // =====================================================
+
+    public List<PaymentOutput>
+    fetchPaymentsByCustomerId(
+            UUID customerId
+    ) {
+
+        return paymentRepository
+
+                .findByCustomerId(
+
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "createdAt"
+                        ),
+
                         customerId
                 )
+
                 .stream()
+
                 .map(this::toPaymentOutput)
+
                 .collect(Collectors.toList());
     }
 
-    public Optional<PaymentOutput> fetchPaymentById(UUID id) {
-        return paymentRepository.findById(id).map(this::toPaymentOutput);
+    // =====================================================
+    // FETCH BY ID
+    // =====================================================
+
+    public Optional<PaymentOutput>
+    fetchPaymentById(UUID id) {
+
+        return paymentRepository
+                .findById(id)
+                .map(this::toPaymentOutput);
     }
 
+    // =====================================================
+    // DELETE PAYMENT
+    // =====================================================
+
     @Transactional
-    public void removePaymentById(UUID id) {
-        paymentRepository.deleteById(id);
+    public void removePaymentById(
+            UUID id
+    ) {
+
+        // ================================================
+        // FIND PAYMENT
+        // ================================================
+
+        Payment payment =
+
+                paymentRepository
+                        .findById(id)
+
+                        .orElseThrow(() ->
+
+                                new RuntimeException(
+                                        "Pagamento não encontrado"
+                                )
+                        );
+
+        // ================================================
+        // GET RELATED MONTHS
+        // ================================================
+
+        List<MonthlyCharge> months =
+
+                monthlyChargeRepository
+                        .findByPaymentIdOrderByReferenceYearAscReferenceMonthAsc(
+                                payment.getId()
+                        );
+
+        // ================================================
+        // REVERT MONTHS
+        // ================================================
+
+        for (
+                MonthlyCharge month : months
+        ) {
+
+            month.markAsUnpaid();
+
+            monthlyChargeRepository.save(
+                    month
+            );
+        }
+
+        // ================================================
+        // DELETE PAYMENT
+        // ================================================
+
+        paymentRepository.delete(payment);
     }
 
+    // =====================================================
+    // UPDATE PAYMENT
+    // =====================================================
+
     @Transactional
-    public Payment updateExistingPayment(UUID id, PaymentInput input, Customer customer) {
+    public Payment updateExistingPayment(
+            UUID id,
+            PaymentInput input,
+            Customer customer
+    ) {
 
-        Payment existing = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+        Payment existing =
+                paymentRepository
+                        .findById(id)
 
-        existing.setAmount(input.amount());
-        existing.setNumMonths(input.numMonths());
-        existing.setPaymentMethod(input.paymentMethod());
-        existing.setConfirmed(input.confirmed());
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Payment not found"
+                                )
+                        );
+
+        existing.setAmount(
+                input.amount()
+        );
+
+        existing.setNumMonths(
+                input.numMonths()
+        );
+
+        existing.setPaymentMethod(
+                input.paymentMethod()
+        );
+
+        existing.setConfirmed(
+                input.confirmed()
+        );
+
         existing.setCustomer(customer);
 
         return paymentRepository.save(existing);
     }
 
-    private PaymentOutput toPaymentOutput(Payment payment) {
+    // =====================================================
+    // OUTPUT
+    // =====================================================
+
+    private PaymentOutput toPaymentOutput(
+            Payment payment
+    ) {
+
         return payment.toOutput();
     }
 
-    // ================== CODE ==================
+    // =====================================================
+    // GENERATE CODE
+    // =====================================================
 
     private String generateReferenceCode() {
-        int year = LocalDate.now().getYear();
-        long count = paymentRepository.count();
-        return String.format("WSM-%d-%06d", year, count + 1);
+
+        int year =
+                LocalDate.now().getYear();
+
+        long count =
+                paymentRepository.count();
+
+        return String.format(
+
+                "WSM-%d-%06d",
+
+                year,
+
+                count + 1
+        );
     }
 }

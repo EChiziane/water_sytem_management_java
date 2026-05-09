@@ -28,9 +28,17 @@ public class CustomerService {
             CustomerRepository customerRepository,
             MonthlyChargeRepository monthlyChargeRepository
     ) {
-        this.customerRepository = customerRepository;
-        this.monthlyChargeRepository = monthlyChargeRepository;
+
+        this.customerRepository =
+                customerRepository;
+
+        this.monthlyChargeRepository =
+                monthlyChargeRepository;
     }
+
+    // =====================================================
+    // CREATE CUSTOMER
+    // =====================================================
 
     @Transactional
     public Customer createNewCustomer(
@@ -38,14 +46,31 @@ public class CustomerService {
             byte initialDebtMonths
     ) {
 
-        if (customer.getCode() == null || customer.getCode().isBlank()) {
-            customer.setCode(generateCustomerCode());
+        // ================================================
+        // GENERATE CODE
+        // ================================================
+
+        if (
+                customer.getCode() == null
+                        || customer.getCode().isBlank()
+        ) {
+
+            customer.setCode(
+                    generateCustomerCode()
+            );
         }
+
+        // ================================================
+        // SAVE CUSTOMER
+        // ================================================
 
         Customer savedCustomer =
                 customerRepository.save(customer);
 
-        // 🔥 GERAR DÍVIDA INICIAL
+        // ================================================
+        // GENERATE INITIAL TIMELINE
+        // ================================================
+
         generateInitialDebt(
                 savedCustomer,
                 initialDebtMonths
@@ -54,28 +79,55 @@ public class CustomerService {
         return savedCustomer;
     }
 
+    // =====================================================
+    // FETCH ALL CUSTOMERS
+    // =====================================================
+
     public List<CustomerOutput> fetchAllCustomers() {
 
         return customerRepository.findAll()
+
                 .stream()
+
                 .map(this::mapToOutput)
+
                 .toList();
     }
 
-    public CustomerOutput fetchCustomerById(UUID id) {
+    // =====================================================
+    // FETCH CUSTOMER BY ID
+    // =====================================================
+
+    public CustomerOutput fetchCustomerById(
+            UUID id
+    ) {
 
         return customerRepository.findById(id)
+
                 .map(this::mapToOutput)
+
                 .orElseThrow(() ->
+
                         new CustomerNotFoundException(
                                 "No user found with ID: " + id
                         )
                 );
     }
 
-    public void removeCustomerById(UUID id) {
+    // =====================================================
+    // DELETE CUSTOMER
+    // =====================================================
+
+    public void removeCustomerById(
+            UUID id
+    ) {
+
         customerRepository.deleteById(id);
     }
+
+    // =====================================================
+    // UPDATE CUSTOMER
+    // =====================================================
 
     @Transactional
     public Optional<CustomerOutput> updateExistingCustomer(
@@ -84,17 +136,45 @@ public class CustomerService {
     ) {
 
         return customerRepository.findById(id)
+
                 .map(existing -> {
 
-                    existing.setName(input.name());
-                    existing.setContact(input.contact());
-                    existing.setAddress(input.address());
-                    existing.setStatus(input.status());
-                    existing.setValve(input.valve());
-                    existing.setMonthlyFee(input.monthlyFee());
+                    existing.setName(
+                            input.name()
+                    );
 
-                    if (existing.getCode() == null || existing.getCode().isBlank()) {
-                        existing.setCode(generateCustomerCode());
+                    existing.setContact(
+                            input.contact()
+                    );
+
+                    existing.setAddress(
+                            input.address()
+                    );
+
+                    existing.setStatus(
+                            input.status()
+                    );
+
+                    existing.setValve(
+                            input.valve()
+                    );
+
+                    existing.setMonthlyFee(
+                            input.monthlyFee()
+                    );
+
+                    // ====================================
+                    // ENSURE CODE
+                    // ====================================
+
+                    if (
+                            existing.getCode() == null
+                                    || existing.getCode().isBlank()
+                    ) {
+
+                        existing.setCode(
+                                generateCustomerCode()
+                        );
                     }
 
                     Customer updated =
@@ -104,80 +184,167 @@ public class CustomerService {
                 });
     }
 
-    // 🔥 MAPEAR CUSTOMER OUTPUT
-    private CustomerOutput mapToOutput(Customer customer) {
+    // =====================================================
+    // MAP CUSTOMER OUTPUT
+    // =====================================================
+
+    private CustomerOutput mapToOutput(
+            Customer customer
+    ) {
 
         List<MonthlyCharge> unpaidCharges =
+
                 monthlyChargeRepository
-                        .findByCustomerIdAndPaidFalseOrderByReferenceMonthAsc(
+
+                        .findByCustomerIdAndPaidFalseOrderByReferenceYearAscReferenceMonthAsc(
                                 customer.getId()
                         );
 
         List<String> unpaidMonths =
+
                 unpaidCharges.stream()
-                        .map(MonthlyCharge::getReferenceMonth)
+
+                        .map(mc ->
+
+                                mc.getReferenceYear()
+                                        + "-"
+                                        + String.format(
+                                        "%02d",
+                                        mc.getReferenceMonth()
+                                )
+                        )
+
                         .toList();
 
         return customer.toCustomerOutput(
+
                 unpaidMonths.size(),
+
                 unpaidMonths
         );
     }
 
-    // 🔥 GERAR DÍVIDA INICIAL
+    // =====================================================
+    // GENERATE INITIAL TIMELINE / DEBT
+    // =====================================================
+
     private void generateInitialDebt(
             Customer customer,
             byte monthsInDebt
     ) {
 
+        // ================================================
+        // DEFAULT
+        // ================================================
+
         if (monthsInDebt <= 0) {
-            return;
+
+            monthsInDebt = 1;
         }
 
         YearMonth current =
                 YearMonth.now();
 
-        for (int i = monthsInDebt - 1; i >= 0; i--) {
+        // ================================================
+        // CREATE TIMELINE
+        // ================================================
+
+        for (
+                int i = monthsInDebt - 1;
+                i >= 0;
+                i--
+        ) {
 
             YearMonth targetMonth =
                     current.minusMonths(i);
 
-            String referenceMonth =
-                    targetMonth.toString();
+            int year =
+                    targetMonth.getYear();
+
+            int month =
+                    targetMonth.getMonthValue();
+
+            // ============================================
+            // CHECK IF EXISTS
+            // ============================================
 
             boolean exists =
+
                     monthlyChargeRepository
-                            .findByCustomerIdAndReferenceMonth(
+
+                            .findByCustomerIdAndReferenceYearAndReferenceMonth(
+
                                     customer.getId(),
-                                    referenceMonth
+
+                                    year,
+
+                                    month
                             )
+
                             .isPresent();
 
             if (!exists) {
 
-                monthlyChargeRepository.save(
+                MonthlyCharge monthlyCharge =
+
                         new MonthlyCharge(
+
                                 customer,
-                                referenceMonth
-                        )
+
+                                year,
+
+                                month
+                        );
+
+                // ========================================
+                // ALL START AS UNPAID
+                // ========================================
+
+                monthlyCharge.setPaid(false);
+
+                // ========================================
+                // FIRST MONTH = INITIAL MONTH
+                // ========================================
+
+                monthlyCharge.setInitialMonth(
+                        i == monthsInDebt - 1
+                );
+
+                // ========================================
+                // SNAPSHOT
+                // ========================================
+
+                monthlyCharge.applyCustomerSnapshot(
+                        customer
+                );
+
+                monthlyChargeRepository.save(
+                        monthlyCharge
                 );
             }
         }
     }
 
-
+    // =====================================================
+    // GENERATE CUSTOMER CODE
+    // =====================================================
 
     private String generateCustomerCode() {
 
-        int year = LocalDate.now().getYear();
+        int year =
+                LocalDate.now().getYear();
 
         String prefix =
                 "WSM-" + year + "-";
 
         List<Customer> lastCustomers =
+
                 customerRepository
+
                         .findByCodeStartingWithOrderByCodeDesc(
+
                                 prefix,
+
                                 PageRequest.of(0, 1)
                         );
 
@@ -189,7 +356,9 @@ public class CustomerService {
                     lastCustomers.get(0).getCode();
 
             String numberPart =
-                    lastCode.substring(prefix.length());
+                    lastCode.substring(
+                            prefix.length()
+                    );
 
             next =
                     Integer.parseInt(numberPart) + 1;

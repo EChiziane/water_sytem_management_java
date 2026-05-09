@@ -7,4 +7,6 @@ public record MonthlyChargeOutput(
         String customerName,
         String referenceMonth,
         boolean paid
-) {}
+) {
+
+}
