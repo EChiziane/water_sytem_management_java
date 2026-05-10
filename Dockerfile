@@ -23,5 +23,8 @@ COPY --from=builder /app/target/Water_Sytem_Management_Java-0.0.1-SNAPSHOT.jar a
 # Expose the port your Spring Boot app runs on
 EXPOSE 8080
 
+# Run the container with the production profile unless another profile is provided.
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
